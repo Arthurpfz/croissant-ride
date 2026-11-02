@@ -6,7 +6,7 @@ An indoor trainer app that runs in the browser. Pair your smart trainer and hear
 
 One rider, no accounts, no backend: everything stays in your browser.
 
-**Try it:** [ride.arthurpfz.com](https://ride.arthurpfz.com) · **No trainer?** Try the [demo](https://ride.arthurpfz.com/?sim=1): a simulated trainer, heart rate and rider.
+**Try it:** [ride.arthurpfz.com](https://ride.arthurpfz.com) · **No trainer?** Pick any workout and choose demo mode, or open the [demo](https://ride.arthurpfz.com/?demo=1): a simulated trainer, heart rate and rider.
 
 ## Features
 
@@ -38,6 +38,7 @@ Then open `http://localhost:5173/?sim=1`. The simulator fakes a trainer, heart r
 | URL flag | What it does |
 |---|---|
 | `?sim=1` | Simulated trainer, heart rate and rider |
+| `?demo=1` | Same, as the visitor demo: ending the ride goes back to the normal start page |
 | `?observe=1` | Read-only trainer: never takes control (e.g. beside another app) |
 | `?debug=1` | Logs raw Bluetooth packets and trainer commands |
 

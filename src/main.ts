@@ -18,7 +18,11 @@ import { bindActions, all as allActions } from './actions';
 import { services } from './post';
 import { parseZwo, loadImported, saveImported } from './zwo';
 
-const SIM = new URLSearchParams(location.search).has('sim');
+const params = new URLSearchParams(location.search);
+// demo: a visitor with no sensors picked a workout and chose to ride the simulator; leaving the ride leaves the demo
+const DEMO = params.has('demo');
+const SIM = DEMO || params.has('sim');
+const DEMO_TAG = ' (demo)';
 const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
 
 let wakeLock: WakeLockSentinel | null = null;
@@ -58,11 +62,8 @@ if (!SIM && !navigator.bluetooth) {
   $('no-bt').textContent = ios
     ? 'iPhone and iPad browsers can’t connect to Bluetooth sensors. Use the Bluefy browser app, or ride from a Mac, PC or Android phone in Chrome.'
     : 'This browser can’t connect to Bluetooth sensors. Open this page in Chrome or Edge to pair your trainer.';
-  $('no-bt').textContent += ' The demo works here.';
+  $('no-bt').textContent += ' You can still pick a workout to try it in demo mode.';
 }
-// Demo = the simulator (?sim=1), for visitors without a trainer
-if (SIM) $('demo').innerHTML = '<span>Demo: simulated trainer, heart rate and rider · <a href="/">Exit demo</a></span>';
-else $('btn-demo').onclick = () => { location.search = '?sim=1'; };
 sensorButton('c-trainer', trainer, connectTrainer);
 sensorButton('c-hr', hrStrap, connectHr);
 sensorButton('c-pm', powerMeter, connectPowerMeter);
@@ -80,7 +81,7 @@ rememberedDevices().then(async (devs) => {
 function renderDots() {
   const dot = (cls: string, n: string) => `<span><i class="dot ${cls}"></i>${n}</span>`;
   const sensor = (s: Sensor, n: string, chip: string) => (s.status === 'idle' ? `<button data-pair="${chip}" title="Pair ${n}">＋ ${n}</button>` : dot(s.status === 'connected' ? '' : 'wait', n));
-  $('sensor-dots').innerHTML = SIM ? dot('ring', 'simulated') : [OBSERVE ? dot('ring', 'read-only') : '', sensor(trainer, 'trainer', 'c-trainer'), sensor(hrStrap, 'HR', 'c-hr'), sensor(powerMeter, 'cadence', 'c-pm'), click.status === 'idle' ? '' : sensor(click, 'remote', 'c-click')].join('');
+  $('sensor-dots').innerHTML = SIM ? dot('ring', DEMO ? 'demo' : 'simulated') : [OBSERVE ? dot('ring', 'read-only') : '', sensor(trainer, 'trainer', 'c-trainer'), sensor(hrStrap, 'HR', 'c-hr'), sensor(powerMeter, 'cadence', 'c-pm'), click.status === 'idle' ? '' : sensor(click, 'remote', 'c-click')].join('');
 }
 $('sensor-dots').onclick = (e) => {
   const b = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-pair]');
@@ -167,8 +168,9 @@ zwoIn.onchange = async () => {
 };
 renderList();
 
-const saved = rec.recover();
-if (saved) {
+const saved = DEMO ? null : rec.recover();
+if (saved?.name.endsWith(DEMO_TAG)) rec.clearSaved(); // a demo tab closed mid-ride
+else if (saved) {
   const box = $('recover');
   box.hidden = false;
   box.innerHTML = `<span>Unfinished ride found: <b>${saved.name}</b> (${hud.fmt(saved.samples.length)})</span>`;
@@ -181,13 +183,17 @@ if (saved) {
 
 // --- ride --------------------------------------------------------------------
 async function startRide(w: Workout) {
+  if (!SIM && [trainer, hrStrap, powerMeter].every((s) => s.status === 'idle')) {
+    if (confirm('No sensors connected. Continue in demo mode? The trainer, heart rate and rider will be simulated.')) location.search = `?demo=1&w=${encodeURIComponent(w.id)}`;
+    return;
+  }
   if (!SIM && trainer.status !== 'connected' && !(powerMeter.status === 'connected' && measuresPower)) {
     if (!confirm('No trainer or power meter connected. Ride anyway?')) return;
   }
   audio.unlock();
   const s = skinById(savedSkin());
   if (route.data !== ROUTE || world.skin !== s) world.show(ROUTE, s);
-  rec.start(`Croissant Ride — ${w.name}`);
+  rec.start(`Croissant Ride — ${w.name}${DEMO ? DEMO_TAG : ''}`);
   ride.start(w);
   $('start').hidden = true;
   $('hud').hidden = false;
@@ -248,12 +254,14 @@ bindActions({
   keys: { label: 'Show these shortcuts', keys: ['?'], button: '#btn-keys', run: () => toggleKeys() },
 }, () => ride.mode === 'ride' || ride.mode === 'paused');
 $('btn-resume').onclick = () => { $('confirm').hidden = true; togglePause(); };
-$('btn-discard').onclick = () => { if (confirm('Delete this ride?')) { rec.clearSaved(); ride.mode = 'start'; location.reload(); } };
+// back to the start screen; a demo ends there, back in normal mode
+const home = () => (DEMO ? location.assign(location.pathname) : location.reload());
+$('btn-discard').onclick = () => { if (DEMO || confirm('Delete this ride?')) { rec.clearSaved(); ride.mode = 'start'; home(); } };
 $('btn-finish').onclick = () => { $('confirm').hidden = true; finish(); };
 $('btn-new').onclick = () => {
-  if (!downloaded && !confirm('This ride hasn’t been downloaded or posted. Leave and delete it?')) return;
+  if (!DEMO && !downloaded && !confirm('This ride hasn’t been downloaded or posted. Leave and delete it?')) return;
   rec.clearSaved();
-  location.reload();
+  home();
 };
 // a reload or closed tab drops the BLE sensors: save, then ask first
 addEventListener('beforeunload', (e) => {
@@ -361,7 +369,7 @@ function finish() {
   wakeLock?.release().catch(() => {});
   rec.persist();
   const r = rec.recording();
-  if (!r.samples.length) { location.reload(); return; }
+  if (!r.samples.length) { home(); return; }
   const st = rec.stats();
   $('hud').hidden = true;
   $('start').hidden = true; // still up when finishing a recovered ride
@@ -400,4 +408,11 @@ function finish() {
     };
     return b;
   }));
+}
+
+// demo started from a workout pick: ride it right away (drop `w` so a reload doesn't restart it)
+if (DEMO && params.has('w')) {
+  const w = [...loadImported(), ...workouts].find((x) => x.id === params.get('w'));
+  history.replaceState(null, '', '?demo=1');
+  if (w) startRide(w);
 }

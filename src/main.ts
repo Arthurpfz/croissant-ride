@@ -21,6 +21,7 @@ import { parseZwo, loadImported, saveImported } from './zwo';
 const params = new URLSearchParams(location.search);
 // demo: a visitor with no sensors picked a workout and chose to ride the simulator; leaving the ride leaves the demo
 const DEMO = params.has('demo');
+if (DEMO && !params.has('w')) location.replace(location.pathname); // a demo is only ever a ride: a reload, Back or a bare link lands on the normal page
 const SIM = DEMO || params.has('sim');
 const DEMO_TAG = ' (demo)';
 const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
@@ -43,7 +44,7 @@ const ride = createRide({
 });
 const SKIN_KEY = 'world-skin'; // last skin picked
 const savedSkin = () => { try { return localStorage.getItem(SKIN_KEY); } catch { return null; } };
-world.show(ROUTE, skinById(savedSkin())); // start-screen backdrop
+const backdrop = world.show(ROUTE, skinById(savedSkin())); // start-screen backdrop (async: loads terrain)
 
 // --- start screen -----------------------------------------------------------
 function sensorButton(id: string, sensor: Sensor, connect: (d?: BluetoothDevice) => Promise<BluetoothDevice>) {
@@ -192,7 +193,7 @@ async function startRide(w: Workout) {
   }
   audio.unlock();
   const r = routeById(w.route), s = skinById(r.skin ?? savedSkin());
-  if (route.data !== r || world.skin !== s) await world.show(r, s);
+  if (route?.data !== r || world.skin !== s) await world.show(r, s);
   $('btn-world').hidden = !!r.skin; // a route with its own skin keeps it
   rec.start(`Croissant Ride — ${w.name}${DEMO ? DEMO_TAG : ''}`);
   ride.start(w);
@@ -412,9 +413,9 @@ function finish() {
   }));
 }
 
-// demo started from a workout pick: ride it right away (drop `w` so a reload doesn't restart it)
+// demo started from a workout pick: ride it right away, back on the plain address so a reload leaves the demo
 if (DEMO && params.has('w')) {
   const w = [...loadImported(), ...workouts].find((x) => x.id === params.get('w'));
-  history.replaceState(null, '', '?demo=1');
-  if (w) startRide(w);
+  history.replaceState(null, '', location.pathname);
+  if (w) backdrop.then(() => startRide(w));
 }

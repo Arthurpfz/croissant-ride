@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Croissant Ride brand</title>
+  <!-- Dev-only reference: served by `npx vite` at /brand/, not part of the build, not linked from the app. -->
+  <link rel="stylesheet" href="/src/style.css" />
+  <style>
+    html, body { height: auto; overflow: auto; background: var(--charcoal); }
+    body { padding: var(--space-14) var(--space-8) 80px; max-width: 1100px; margin: 0 auto; }
+    section { margin: 0 0 56px; }
+    h1 { display: flex; align-items: center; gap: var(--space-6); }
+    h2 { border-bottom: var(--border) solid var(--line); padding-bottom: var(--space-4); }
+    h3 { margin: var(--space-12) 0 var(--space-4); font-size: var(--fs-title); }
+    p, li { color: var(--muted); line-height: 1.5; max-width: 72ch; }
+    code { color: var(--accent); font-size: var(--fs-body); }
+    .doc { color: var(--muted); font-size: var(--fs-caption); margin: var(--space-2) 0 var(--space-6); }
+    .demo .panel { position: static; }
+    .flex { display: flex; gap: var(--space-8); flex-wrap: wrap; align-items: center; }
+    .cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--space-8); }
+    .tile { background: var(--surface-raised); border: var(--border) solid var(--line); border-radius: var(--radius-lg); padding: var(--space-8); }
+
+    /* logos */
+    .logo-opt { display: flex; flex-direction: column; gap: var(--space-6); }
+    .logo-opt .big { width: 128px; height: 128px; }
+    .sizes { display: flex; align-items: flex-end; gap: var(--space-6); padding: var(--space-6); border-radius: var(--radius-md); }
+    .sizes.light { background: var(--bone); } .sizes.dark { background: #000; }
+    .lockup { display: flex; align-items: center; gap: var(--space-5); font-weight: var(--fw-bold); font-size: var(--fs-stat); }
+    .tab { display: inline-flex; align-items: center; gap: var(--space-3); background: #e8e2da; color: #333; font-size: var(--fs-unit); padding: var(--space-3) var(--space-6); border-radius: var(--radius-sm) var(--radius-sm) 0 0; }
+
+    /* tokens */
+    .swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: var(--space-5); }
+    .sw { border-radius: var(--radius-md); overflow: hidden; border: var(--border) solid var(--line); font-size: var(--fs-unit); }
+    .sw i { display: block; height: 52px; background-image: linear-gradient(45deg, #fff 25%, transparent 25%, transparent 75%, #fff 75%), linear-gradient(45deg, #fff 25%, transparent 25%, transparent 75%, #fff 75%); background-size: 12px 12px; background-position: 0 0, 6px 6px; background-color: #ccc; position: relative; }
+    .sw i::after { content: ''; position: absolute; inset: 0; background: var(--c); }
+    .sw div { padding: var(--space-3) var(--space-4); } .sw span { display: block; color: var(--muted); }
+    .scale div { display: flex; align-items: baseline; gap: var(--space-8); margin: var(--space-2) 0; }
+    .scale code { min-width: 160px; }
+    .space i { display: inline-block; height: 12px; background: var(--accent); border-radius: 2px; }
+    .radii { display: flex; gap: var(--space-6); flex-wrap: wrap; }
+    .radii div { width: 72px; height: 48px; border: calc(var(--border) * 2) solid var(--accent); display: grid; place-items: center; font-size: var(--fs-label); color: var(--muted); }
+
+    /* readability strips */
+    .bgs { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--space-6); }
+    .bgs > div { border-radius: var(--radius-lg); padding: var(--space-10); display: flex; flex-direction: column; align-items: center; gap: var(--space-6); min-height: 220px; }
+    .bg-bright { background: linear-gradient(#fff 0 60%, #f6f6f0); }
+    .bg-sky { background: linear-gradient(#cfe3ee 0 55%, #7cb46b 55%); }
+    .bg-dark { background: linear-gradient(#05070d 0 60%, #1d2a18); }
+    .bg-busy { background: repeating-linear-gradient(45deg, #fff 0 10px, #222 10px 20px); }
+    table { border-collapse: collapse; width: 100%; font-size: var(--fs-body); }
+    th, td { text-align: left; padding: var(--space-3) var(--space-4); border-bottom: var(--border) solid var(--line); }
+    th { color: var(--muted); font-weight: var(--fw-medium); }
+    .pass { color: var(--ok); } .fail { color: var(--high); font-weight: var(--fw-bold); }
+    .voice td:first-child { color: var(--ok); } .voice td:last-child { color: var(--high); }
+  </style>
+</head>
+<body>
+  <h1>Croissant Ride — brand</h1>
+  <p>Dev-only reference for the design system (roadmap N16). Tokens live in <code>src/tokens.css</code>, component looks in <code>src/style.css</code>, canvas colours come from <code>src/tokens.ts</code>. Everything below is rendered with the real stylesheet.</p>
+
+  <section>
+    <h2>Logo</h2>
+    <p>A TT wheel set, deep-section front wheel and disc rear, in the Graphite colourway: slate tile, bone wheels, crust hubs. Lives in <code>public/logo.svg</code>; used as the favicon and on the start screen.</p>
+    <div class="logo-opt tile">
+      <img class="big" src="/logo.svg" alt="Placeholder logo: TT wheel set" />
+      <div class="sizes dark"><img src="/logo.svg" width="64" alt="" /><img src="/logo.svg" width="32" alt="" /><img src="/logo.svg" width="16" alt="" /></div>
+      <div class="sizes light"><img src="/logo.svg" width="64" alt="" /><img src="/logo.svg" width="32" alt="" /><img src="/logo.svg" width="16" alt="" /></div>
+      <div class="lockup"><img src="/logo.svg" width="40" alt="" />Croissant Ride</div>
+    </div>
+    <h3>Name</h3>
+    <p>Always <strong>Croissant Ride</strong>: two words, both capitalised, never "CroissantRide", "Croissant-Ride" or "CR". The wordmark is Geist bold with tight tracking, bone on charcoal, charcoal on crust.</p>
+  </section>
+
+  <section>
+    <h2>Voice</h2>
+    <p>A calm friend on the wheel next to you. Short, warm, never shouty. The rider is working hard and glancing for half a second, so every word must earn its place.</p>
+    <ul>
+      <li><strong>Live cues: 2–4 words, verb first.</strong> One leading symbol at most (▲ ▼ ⟳ ⚡) so the cue reads before the words do.</li>
+      <li><strong>Sentence case.</strong> No ALL CAPS shouting; caps only for tiny labels like TARGET.</li>
+      <li><strong>Encourage, never blame.</strong> Say what to do, not what went wrong with the rider.</li>
+      <li><strong>Errors say what happened and what happens next.</strong> "Trainer lost — reconnecting…".</li>
+      <li><strong>No other emoji in live cues.</strong> One is fine for a finish or celebration banner (🎉).</li>
+      <li><strong>Food puns: rare, never mid-effort.</strong> Fine on empty states or the ride summary, never in cues or errors.</li>
+      <li><strong>Our own words.</strong> Don't reuse cue phrases from other training apps.</li>
+      <li><strong>Units:</strong> number, space, unit: <code>131 W</code>, <code>20 min</code>, <code>3 of 6</code>.</li>
+    </ul>
+    <table class="voice">
+      <tr><th>Say</th><th>Not</th></tr>
+      <tr><td>▲ Pick it up</td><td>POWER TOO LOW!!</td></tr>
+      <tr><td>▼ Settle in</td><td>You're going way too hard</td></tr>
+      <tr><td>⟳ Spin up to resume ERG</td><td>ERG error: cadence below threshold</td></tr>
+      <tr><td>Workout complete 🎉</td><td>🔥🔥 BEAST MODE 🔥🔥</td></tr>
+      <tr><td>Unfinished ride found</td><td>Crash detected</td></tr>
+    </table>
+  </section>
+
+  <section>
+    <h2>Tokens</h2>
+    <h3>Colour</h3>
+    <div id="swatches"></div>
+    <h3>Type</h3>
+    <div class="scale" id="type"></div>
+    <h3>Spacing <span class="doc">(<code>--space-N</code> = 2N px)</span></h3>
+    <div class="scale space" id="space"></div>
+    <h3>Radii</h3>
+    <div class="radii" id="radii"></div>
+    <h3>Depth + motion</h3>
+    <div class="flex">
+      <div class="tile" style="box-shadow: var(--shadow-panel)"><code>--shadow-panel</code></div>
+      <div class="tile" style="box-shadow: var(--shadow-card)"><code>--shadow-card</code></div>
+      <div class="tile" style="text-shadow: var(--shadow-text)"><code>--shadow-text</code></div>
+      <div class="tile"><code>--blur-panel</code> 8px · <code>--motion-fade</code> .4s</div>
+    </div>
+  </section>
+
+  <section class="demo">
+    <h2>Components</h2>
+
+    <h3>Panel</h3><div class="doc"><code>.panel</code> — see-through charcoal surface over the 3D world (80% opacity). Every HUD block sits on one; secondary text on it uses <code>--ash-hud</code>.</div>
+    <div class="panel" style="padding: var(--space-10); width: 300px"><div class="wname">3×20min Sweet Spot</div><div class="wfinish">Finish in <b>1:12:45</b></div></div>
+
+    <h3>Mono label</h3><div class="doc"><code>.label</code> — tiny uppercase Geist Mono caption over a group.</div>
+    <small class="label">Workouts</small>
+
+    <h3>Buttons</h3><div class="doc"><code>button</code> = secondary (default) · <code>.primary</code> = crust fill, one per view, the main action · <code>.danger</code> = crust outline, ending or discarding · <code>.icon</code> = one stroke icon.</div>
+    <div class="flex"><button>Skip step</button><button class="primary">Finish</button><button class="danger">End ride</button><button class="icon" aria-label="Switch world"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path d="M3 12h18M12 3c3 3.2 3 14.8 0 18M12 3c-3 3.2-3 14.8 0 18" /></svg></button></div>
+
+    <h3>Cue</h3><div class="doc"><code>.cue</code> — one coaching line, plain text with <code>--shadow-text</code> (no box), hidden when empty. Same look for the banner. Follows the voice rules.</div>
+    <div class="flex"><div class="cue">▲ Pick it up</div><div class="cue">▼ Settle in</div><div class="cue">⚡ Sprint ~10 strokes</div></div>
+
+    <h3>Live power + state chip</h3><div class="doc"><code>.pw</code> — Doto number, unit and a <code>.state</code> chip: <code>.low</code> / <code>.ok</code> / <code>.high</code> against target (empty = hidden). The number itself stays bone.</div>
+    <div class="panel flex" style="padding: var(--space-10) var(--space-14); width: fit-content; gap: var(--space-14)">
+      <div class="pw"><b>112</b><span><small>W</small><span class="state low">Under</span></span></div>
+      <div class="pw"><b>133</b><span><small>W</small><span class="state ok">On target</span></span></div>
+      <div class="pw"><b>158</b><span><small>W</small><span class="state high">Over</span></span></div>
+    </div>
+
+    <h3>Bars</h3><div class="doc"><code>.bar</code> (thin, workout progress where the graph is hidden) and <code>.bar.step</code> (8px, time left in the step). Crust on slate.</div>
+    <div class="panel" style="padding: var(--space-8); width: 420px; display: grid; gap: var(--space-6)"><div class="bar"><div style="width: 40%"></div></div><div class="bar step"><div style="width: 65%"></div></div></div>
+
+    <h3>Stat + stat tile</h3><div class="doc">Stat = <code>&lt;b&gt;</code> number (Geist Mono on the HUD) + <code>&lt;small&gt;</code> unit. Tile = <code>.grid &gt; div</code>: mono label on top, Doto value + unit.</div>
+    <div class="grid" style="max-width: 560px"><div><small>Time</small><b>1:12<small>h</small></b></div><div><small>Avg power</small><b>214<small>W</small></b></div><div><small>Avg HR</small><b>142<small>bpm</small></b></div></div>
+
+    <h3>Workout card</h3><div class="doc"><code>.wo</code> — graphite tile: name + duration, muted summary, zone-coloured profile (<code>--zone-1…6</code>). <code>.free</code> = no profile, <code>.wo-import</code> = dashed with a plus.</div>
+    <div class="list" style="max-width: 900px"><button class="wo"><span class="wo-top"><strong>7×10 Threshold</strong><time>2:06:00</time></span><em>Long-course engine</em><canvas id="wo-demo" width="500" height="120"></canvas></button><button class="wo wo-import"><span class="wo-top"><strong>Import session</strong></span><em>Zwift .zwo file</em></button></div>
+
+    <h3>Sensor chip</h3><div class="doc"><code>.sensor</code> — dot, name, status and live reading; dashed with a hollow dot until paired, <code>.on</code> (chalk) when connected.</div>
+    <div class="sensors"><button class="sensor on"><strong>Smart trainer</strong><span>Smart trainer 1A2B</span><em>182 W</em></button><button class="sensor"><strong>Heart rate</strong><span>Tap to pair</span><em></em></button><button class="sensor"><strong>Cadence <small>(optional)</small></strong><span>Tap to pair</span><em></em></button></div>
+
+    <h3>Overlay card</h3><div class="doc"><code>.overlay</code> scrim + <code>.card</code>; <code>.actions</code> right-aligned, primary in the middle of the reading order.</div>
+    <div style="background: var(--scrim); padding: var(--space-12); border-radius: var(--radius-lg)"><div class="card"><h2 style="border: 0; padding: 0">Finish ride?</h2><div class="actions"><button>Keep riding</button><button class="primary">Finish</button><button class="danger">Discard</button></div></div></div>
+  </section>
+
+  <section class="demo">
+    <h2>Readability over any world</h2>
+    <p>The HUD never re-tints with the scene (N9 world packs may change the world, not the HUD). Same panel over the brightest sky, the default sky, a night scene and a busy pattern. Rule: text and buttons sit on a panel or card. Exception: the cue and the banner are plain text with <code>--shadow-text</code>, to keep the view clean.</p>
+    <div class="bgs" id="bgs"></div>
+    <h3>Contrast (WCAG 2.1 AA)</h3>
+    <p>Computed live from the tokens: panel alpha composited over pure white (worst bright sky), the default sky and pure black. AA needs 4.5:1 for normal text, 3:1 for large text (≥24px, or ≥18.7px bold).</p>
+    <table id="contrast"></table>
+    <p>All rows pass AA with panels at 80% opacity (Graphite, 2026-11-01). On panels, Ash is lifted to <code>--ash-hud</code> and <code>--danger</code> is a lifted crust, both to stay above 4.5:1 over a white sky.</p>
+  </section>
+
+  <script type="module">
+    const css = getComputedStyle(document.documentElement);
+    const v = (n) => css.getPropertyValue(`--${n}`).trim();
+    const groups = {
+      Neutrals: ['carbon', 'charcoal', 'graphite', 'slate', 'slate-hover', 'rule', 'edge', 'ash', 'ash-hud', 'stone', 'bone'],
+      Accents: ['crust', 'chalk'],
+      Surfaces: ['surface-panel', 'surface-card', 'surface-tile', 'surface-raised', 'surface-hover', 'surface-input', 'surface-callout', 'scrim', 'line', 'line-strong'],
+      'Text + states': ['text', 'muted', 'soft', 'accent', 'on-accent', 'danger', 'low', 'ok', 'high', 'hr'],
+      'Power zones (<56, 56–75, 76–90, 91–105, 106–120, >120 % FTP)': ['zone-1', 'zone-2', 'zone-3', 'zone-4', 'zone-5', 'zone-6'],
+      Canvas: ['graph-ahead', 'graph-marker', 'map-route', 'map-done', 'map-rider', 'map-rider-ring'],
+    };
+    document.getElementById('swatches').innerHTML = Object.entries(groups).map(([g, names]) =>
+      `<p><strong>${g}</strong></p><div class="swatches">${names.map((n) =>
+        `<div class="sw"><i style="--c: var(--${n})"></i><div><code>--${n}</code><span>${v(n)}</span></div></div>`).join('')}</div>`).join('');
+    const face = { hero: 'dot', 'hero-mid': 'dot', 'hero-compact': 'dot', tile: 'dot', stat: 'mono', 'stat-sm': 'mono', input: 'mono', unit: 'mono', caption: 'mono', label: 'mono' };
+    document.getElementById('type').innerHTML = ['hero', 'hero-mid', 'hero-compact', 'tile', 'display', 'banner', 'h1', 'stat', 'h2', 'card', 'title', 'stat-sm', 'input', 'ui', 'body', 'caption', 'unit', 'label']
+      .map((n) => `<div><code>--fs-${n}</code><span style="font-family: var(--font-${face[n] ?? 'sans'}); font-size: var(--fs-${n}); font-weight: var(--fw-${face[n] === 'dot' ? 'dot' : 'semibold'})">${v(`fs-${n}`)} ${face[n] ? '133' : 'Pick it up 133'}</span></div>`).join('');
+    document.getElementById('space').innerHTML = ['unit', 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 16]
+      .map((n) => `<div><code>--space-${n}</code><i style="width: calc(var(--space-${n}) * 4)"></i><span>${v(`space-${n}`)}</span></div>`).join('');
+    document.getElementById('radii').innerHTML = ['xs', 'sm', 'step', 'md', 'ctl', 'lg', 'wo', 'panel', 'card', 'pill']
+      .map((n) => `<div style="border-radius: var(--radius-${n})">${n} ${n === 'pill' ? '' : v(`radius-${n}`)}</div>`).join('');
+
+    // workout card profile with zone tokens
+    const cv = document.getElementById('wo-demo'), g = cv.getContext('2d');
+    const steps = [[30, 50, 75], ...Array.from({ length: 7 }, () => [[10, 92], [1, 55]]).flat(), [20, 60, 40]];
+    const T = steps.reduce((a, s) => a + s[0], 0); let t = 0;
+    const zone = (p) => v(`zone-${p < 56 ? 1 : p < 76 ? 2 : p < 91 ? 3 : p < 106 ? 4 : p < 121 ? 5 : 6}`);
+    for (const [d, a, b = a] of steps) {
+      const x0 = t / T * 500, x1 = (t + d) / T * 500; g.fillStyle = zone((a + b) / 2);
+      g.beginPath(); g.moveTo(x0, 120); g.lineTo(x0, 120 - a / 160 * 120); g.lineTo(x1, 120 - b / 160 * 120); g.lineTo(x1, 120); g.fill(); t += d;
+    }
+
+    // readability strips
+    const sample = `<div class="panel" style="position: static; padding: var(--space-8) var(--space-12)"><div class="pw"><b style="font-size: 56px">133</b><span><small>W</small><span class="state ok">On target</span></span></div><div class="step-line" style="margin-top: var(--space-4)"><span>Target <b>131 W</b> · 50% FTP</span></div></div><div class="cue">▲ Pick it up</div><div id="controls" style="position: static; transform: none"><button>Skip step</button><button class="danger">End ride</button></div>`;
+    document.getElementById('bgs').innerHTML = ['bright', 'sky', 'dark', 'busy'].map((b) => `<div class="bg-${b}">${sample}</div>`).join('');
+
+    // contrast
+    const probe = document.createElement('i'); document.body.append(probe);
+    const rgba = (c) => { probe.style.color = c; return getComputedStyle(probe).color.match(/[\d.]+/g).map(Number).concat(1).slice(0, 4); };
+    const over = (f, b) => f.slice(0, 3).map((x, i) => x * f[3] + b[i] * (1 - f[3]));
+    const lum = (c) => c.map((x) => (x /= 255) <= .03928 ? x / 12.92 : ((x + .055) / 1.055) ** 2.4).reduce((a, x, i) => a + x * [.2126, .7152, .0722][i], 0);
+    const ratio = (a, b) => { const [h, l] = [lum(a), lum(b)].sort((x, y) => y - x); return (h + .05) / (l + .05); };
+    const panel = rgba(v('surface-panel')), raised = rgba(v('surface-raised'));
+    const backs = { 'white sky': [255, 255, 255], 'default sky': rgba(v('sky')), night: [0, 0, 0] };
+    const texts = [['text', 'normal', 'panel'], ['ash-hud', 'normal', 'panel'], ['soft', 'normal', 'panel'], ['danger', 'normal', 'panel'], ['accent', 'large', 'panel'], ['ok', 'normal', 'raised'], ['low', 'normal', 'raised'], ['high', 'normal', 'raised'], ['text', 'normal', 'raised']];
+    document.getElementById('contrast').innerHTML = `<tr><th>Text</th><th>On</th><th>Size</th>${Object.keys(backs).map((b) => `<th>panel over ${b}</th>`).join('')}</tr>` +
+      texts.map(([n, size, on]) => `<tr><td><code>--${n}</code></td><td>${on}</td><td>${size}</td>${Object.values(backs).map((bg) => {
+        const p = over(panel, bg), surf = on === 'raised' ? over(raised, p) : p, r = ratio(rgba(v(n)).slice(0, 3), surf);
+        return `<td class="${r >= (size === 'large' ? 3 : 4.5) ? 'pass' : 'fail'}">${r.toFixed(1)}:1</td>`;
+      }).join('')}</tr>`).join('') +
+      `<tr><td><code>--on-accent</code></td><td>accent</td><td>normal</td><td class="pass" colspan="3">${ratio(rgba(v('on-accent')).slice(0, 3), rgba(v('accent')).slice(0, 3)).toFixed(1)}:1 (opaque)</td></tr>`;
+  </script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+node_modules/
+dist/
+.env
+.DS_Store
+.netlify/
+CLAUDE.local.md
+.claude/settings.local.json

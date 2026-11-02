@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Croissant Ride</title>
+  <link rel="icon" href="/logo.svg" />
+  <link rel="stylesheet" href="/src/style.css" />
+</head>
+<body>
+  <canvas id="world"></canvas>
+
+  <!-- ride HUD -->
+  <div id="hud" hidden>
+    <section id="workout" class="panel">
+      <div><div class="wname" id="w-name"></div><div class="wfinish" id="w-finish"></div></div>
+      <div class="bar"><div id="w-progress"></div></div>
+      <ol id="w-steps"></ol>
+      <div class="bias">
+        <button data-bias="-1" title="10 W easier (−)" aria-label="10 W easier">−</button>
+        <span id="w-bias">100%</span>
+        <button data-bias="1" title="10 W harder (+)" aria-label="10 W harder">+</button>
+        <small class="label">Target</small>
+      </div>
+      <canvas id="w-graph" width="560" height="104"></canvas>
+    </section>
+
+    <div id="center">
+    <section id="data" class="panel">
+      <div class="row top">
+        <div><b id="d-speed">0</b><small>km/h</small></div>
+        <div><b id="d-dist">0.0</b><small>km</small></div>
+        <div><b id="d-ascent">0</b><small>m ↗</small></div>
+        <div><b id="d-time">0:00</b></div>
+      </div>
+      <div class="row mid">
+        <div class="power">
+          <div class="pw"><b id="d-power">0</b><span><small>W</small><span id="d-state" class="state"></span></span></div>
+          <div class="step-line"><span id="d-target"></span><span id="d-step-left"></span></div>
+          <div class="bar step"><div id="d-step-bar"></div></div>
+        </div>
+        <div class="side">
+          <div><b id="d-avg">0</b><small>avg W</small></div>
+          <div class="hr"><b id="d-hr">—</b><small>bpm</small></div>
+          <div><b id="d-kj">0</b><small>kJ</small></div>
+        </div>
+      </div>
+    </section>
+    <div id="cue" class="cue"></div>
+    <div id="banner"></div>
+    </div>
+
+    <canvas id="minimap" width="220" height="220"></canvas>
+    <div id="controls">
+      <span id="sensor-dots"></span>
+      <button id="btn-pause">Pause</button>
+      <button id="btn-skip">Skip step</button>
+      <button id="btn-erg" title="Drop ERG for this step and ride by feel (E)">Ride by feel</button>
+      <button id="btn-world" class="icon" title="Switch world (W)" aria-label="Switch world">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M3 12h18M12 3c3 3.2 3 14.8 0 18M12 3c-3 3.2-3 14.8 0 18" /></svg>
+      </button>
+      <button id="btn-mute" class="icon" title="Mute audio cues (M)" aria-label="Mute audio cues">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" /><path class="waves" d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12" /><path class="x" d="M16.5 9.5l5 5M21.5 9.5l-5 5" /></svg>
+      </button>
+      <button id="btn-keys" class="icon" title="Keyboard shortcuts (?)" aria-label="Keyboard shortcuts">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="12" rx="2" /><path d="M7 10h1M11 10h1M15 10h1M8 14h8" /></svg>
+      </button>
+      <button id="btn-end" class="danger">End ride</button>
+    </div>
+    <div id="keys" class="panel" hidden>
+      <small class="label">Shortcuts</small>
+      <table id="keys-list"></table>
+      <p>A presentation clicker works too: Page Up/Down change the target.</p>
+    </div>
+  </div>
+
+  <!-- start screen -->
+  <div id="start" class="overlay">
+    <div class="card wide">
+      <header class="head">
+        <h1><img class="logo" src="/logo.svg" alt="" />Croissant Ride</h1>
+        <div class="settings">
+          <label>FTP <input id="s-ftp" type="number" min="100" max="500" /> W</label>
+          <label>Weight <input id="s-weight" type="number" min="40" max="150" /> kg</label>
+          <span id="s-wkg" class="pill"></span>
+        </div>
+      </header>
+      <div class="sensors">
+        <button id="c-trainer" class="sensor"><strong>Smart trainer</strong><span>Tap to pair</span><em></em></button>
+        <button id="c-hr" class="sensor"><strong>Heart rate</strong><span>Tap to pair</span><em></em></button>
+        <button id="c-pm" class="sensor"><strong>Cadence <small>(optional)</small></strong><span>Tap to pair</span><em></em></button>
+      </div>
+      <p id="no-bt" hidden></p>
+      <div id="recover" hidden></div>
+      <div class="list-head">
+        <small class="label">Workouts</small>
+        <span class="legend">
+          <span><i style="--c: var(--zone-1)"></i>Z1</span><span><i style="--c: var(--zone-2)"></i>Z2</span><span><i style="--c: var(--zone-3)"></i>Z3</span>
+          <span><i style="--c: var(--zone-4)"></i>Z4</span><span><i style="--c: var(--zone-5)"></i>Z5</span><span><i style="--c: var(--zone-6)"></i>Z6</span>
+        </span>
+      </div>
+      <div id="list" class="list"></div>
+      <input id="zwo-file" type="file" accept=".zwo" multiple hidden>
+      <p class="foot"><a href="/THIRD-PARTY-NOTICES.txt" target="_blank" rel="noopener">Licences</a></p>
+    </div>
+  </div>
+
+  <!-- end-of-ride -->
+  <div id="confirm" class="overlay" hidden>
+    <div class="card">
+      <h2>Finish ride?</h2>
+      <div class="actions">
+        <button id="btn-resume">Keep riding</button>
+        <button id="btn-finish" class="primary">Finish</button>
+        <button id="btn-discard" class="danger">Discard</button>
+      </div>
+    </div>
+  </div>
+  <div id="summary" class="overlay" hidden>
+    <div class="card wide">
+      <h1 id="sum-title">Ride complete</h1>
+      <div class="sum">
+        <div class="tile chart">
+          <div class="tile-head">
+            <h2>Power</h2>
+            <span class="legend"><span><i class="line" style="--c: var(--accent)"></i>Watts</span><span id="sum-tgt-key"><i style="--c: var(--line-strong)"></i>Target</span></span>
+          </div>
+          <div class="plot"><div id="sum-y"></div><svg id="sum-chart" preserveAspectRatio="none" role="img"></svg><div id="sum-x"></div></div>
+        </div>
+        <div class="tile zones">
+          <div class="tile-head"><h2>Time in zone</h2></div>
+          <div id="sum-zones"></div>
+        </div>
+        <div id="sum-grid" class="grid"></div>
+        <div class="tile post-box">
+          <div id="post" class="post">
+            <small class="label">Post to</small>
+          </div>
+          <p id="sum-note">Downloads the .FIT and opens the site: drop the file in.</p>
+          <div class="actions">
+            <button id="btn-download">Download .FIT</button>
+            <button id="btn-new" class="primary">Done</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>

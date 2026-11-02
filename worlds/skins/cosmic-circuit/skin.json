@@ -1,0 +1,22 @@
+{
+  "name": "Cosmic Circuit",
+  "author": "Croissant Ride",
+  "licence": "CC0-1.0",
+  "assets": "All procedural: no external models or textures",
+  "sky": { "type": "nebula", "colors": ["#04061a", "#3a1a7a", "#0d5a6a"], "stars": 7000 },
+  "fog": { "color": "#05081c", "near": 300, "far": 3000 },
+  "light": { "sky": "#9fb0ff", "ground": "#221438", "ambient": 1.0, "sun": "#e6ecff", "sunIntensity": 1.6, "sunFrom": [30, 60, 20] },
+  "ground": { "type": "none" },
+  "road": { "style": "glass", "surface": "#0a1024", "edge": "#39ff88", "grid": "#39ff88" },
+  "rider": { "suit": "#dfe4ee", "accent": "#39ff88", "skin": "#c4ccda", "helmet": "#e6eaf2", "visor": "#c9a24a", "shoes": "#2a3045" },
+  "bike": { "frame": "#9aa5b8", "accent": "#e6eaf2", "parts": "#1a1f2c", "tyres": "#0e121b", "rims": "#151a26", "glow": "#39ff88", "front": "deep", "rear": "disc" },
+  "props": [
+    { "type": "planet", "dir": [0.55, 0.22, -0.8], "distance": 6000, "radius": 900, "colors": ["#2a1b66", "#7d5cff"], "ring": true, "tilt": 0.35 },
+    { "type": "planet", "dir": [-0.7, 0.35, 0.4], "distance": 7000, "radius": 320, "colors": ["#0c4a5a", "#56d6e0"], "tilt": -0.2 },
+    { "type": "cube", "every": [180, 360], "edge": 320, "grid": 6, "hull": "#1b1e2b", "seams": "#ffb347", "beam": "#ff7a1a", "moons": 5, "moon": "#9a94a8" },
+    { "type": "asteroids", "count": 600, "from": 150, "to": 2500, "size": [2, 40], "color": "#9a90b0" },
+    { "type": "gates", "every": 1000, "color": "#39ff88", "radius": 7 },
+    { "type": "flyby", "every": [120, 240], "speed": 120, "hull": "#8a93a8", "accent": "#39ff88", "canopy": "#c9a24a" }
+  ],
+  "bloom": { "strength": 0.55, "radius": 0.15, "threshold": 0.85 }
+}

@@ -1,0 +1,24 @@
+{
+  "name": "Night Draft",
+  "author": "Croissant Ride",
+  "licence": "CC0-1.0",
+  "assets": "All procedural: no external models or textures",
+  "sky": { "type": "gradient", "top": "#252528", "horizon": "#323235", "stars": 800 },
+  "fog": { "color": "#323235", "near": 10, "far": 700 },
+  "light": { "sky": "#b8b8b8", "ground": "#202020", "ambient": 0.9, "sun": "#ffffff", "sunIntensity": 1.2, "sunFrom": [30, 60, 20] },
+  "ground": {
+    "type": "ridges",
+    "color": "#404042",
+    "ridges": [
+      { "distance": 5600, "height": 420, "color": "#37373a" },
+      { "distance": 4300, "height": 260, "color": "#39393c" },
+      { "distance": 3100, "height": 120, "color": "#3b3b3e" }
+    ]
+  },
+  "road": { "style": "lines", "surface": "#404042", "lines": "#cacaca", "width": 1.6 },
+  "rider": { "suit": "#d6d6d6", "accent": "#111111", "skin": "#bdbdbd", "helmet": "#f2f2f2", "visor": "#1a1a1a", "shoes": "#f2f2f2" },
+  "bike": { "frame": "#141414", "accent": "#e6e6e6", "parts": "#0f0f0f", "tyres": "#0c0c0c", "rims": "#151515", "glow": "#ffffff", "front": "deep", "rear": "disc" },
+  "props": [
+    { "type": "meteor", "every": [90, 240], "color": "#ffffff" }
+  ]
+}

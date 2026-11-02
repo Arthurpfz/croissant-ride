@@ -1,0 +1,144 @@
+/* Croissant Ride design tokens ("Graphite": charcoal ground, one warm accent, dot-matrix numerals for live data).
+   The only place raw colour, type, spacing, radius, shadow and motion values live.
+   style.css and the brand page use these; canvas code reads them via src/tokens.ts. Reference: /brand/ (dev only). */
+
+/* Latin subsets from Google Fonts, SIL OFL (public/fonts/OFL.txt); each file is variable, so one face covers every weight */
+@font-face { font-family: 'Geist'; src: url('/fonts/geist.woff2') format('woff2'); font-weight: 100 900; font-display: swap; }
+@font-face { font-family: 'Geist Mono'; src: url('/fonts/geist-mono.woff2') format('woff2'); font-weight: 100 900; font-display: swap; }
+@font-face { font-family: 'Doto'; src: url('/fonts/doto.woff2') format('woff2'); font-weight: 100 900; font-display: swap; }
+
+:root {
+  /* neutrals, darkest to lightest */
+  --carbon: #0f1011;    /* app frame, inputs */
+  --charcoal: #141516;  /* ground: panels, text on the accent */
+  --graphite: #1c1d20;  /* cards and tiles on the start + summary screens */
+  --slate: #2b2c30;     /* raised: secondary buttons, tracks, current step, chips */
+  --slate-hover: #35363b;
+  --rule: #2e3034;      /* hairlines on panels and cards */
+  --edge: #3a3b40;      /* control borders */
+  --ash: #8a8c91;       /* secondary text on opaque cards */
+  --ash-hud: #b2b4b9;   /* secondary text on HUD panels: they're see-through, so Ash is lifted to stay AA over a white sky */
+  --stone: #c9c9c4;     /* soft body text, inactive steps */
+  --bone: #ecebe6;      /* primary text */
+
+  /* accents */
+  --crust: #e8783a;     /* the one warm accent: actions, live target, progress */
+  --chalk: #d5dfa5;     /* on target, connected */
+
+  /* surfaces */
+  --surface-panel: rgba(20, 21, 22, .8);     /* HUD panels over the world (charcoal) */
+  --surface-card: rgba(20, 21, 22, .95);     /* overlay cards */
+  --surface-tile: var(--graphite);           /* tiles inside a card: sensors, workouts, stats */
+  --surface-raised: var(--slate);
+  --surface-hover: var(--slate-hover);
+  --surface-input: var(--carbon);
+  --surface-callout: rgba(232, 120, 58, .12); /* crust-tinted notice */
+  --scrim: rgba(15, 16, 17, .45);            /* dims the world behind overlays */
+  --line: var(--rule);
+  --line-strong: var(--edge);
+
+  /* semantic text */
+  --text: var(--bone);
+  --muted: var(--ash);
+  --soft: var(--stone);
+  --accent: var(--crust);
+  --on-accent: var(--charcoal);
+  --danger: #f2a070;    /* crust lifted for small text on HUD panels (AA over a white sky) */
+
+  /* live-data states (the chip next to live power) */
+  --low: #a3b5c5;       /* under target */
+  --ok: var(--chalk);
+  --high: var(--crust); /* over target */
+  --hr: var(--text);
+
+  /* power zones (% FTP): <56, 56–75, 76–90, 91–105, 106–120, >120. Desaturated, stepped in lightness */
+  --zone-1: #5e6167;
+  --zone-2: #7f95a8;
+  --zone-3: #a9b68c;
+  --zone-4: #d9b46a;
+  --zone-5: #e8783a;
+  --zone-6: #b9493a;
+
+  /* canvas overlays (workout graph, minimap) */
+  --graph-ahead: rgba(0, 0, 0, .6); /* erased from steps still to come, so they show at 40% */
+  --graph-marker: var(--bone);
+  --map-route: var(--zone-1);
+  --map-done: var(--bone);          /* the part of this lap already ridden */
+  --map-rider: var(--crust);
+  --map-rider-ring: var(--charcoal);
+
+  /* type */
+  --font-sans: 'Geist', system-ui, -apple-system, 'Segoe UI', sans-serif; /* headings + body */
+  --font-mono: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace;   /* labels, units, durations, small numbers */
+  --font-dot: 'Doto', var(--font-mono);                                   /* live metrics only */
+  --fs-label: 12px;    /* uppercase mono micro labels */
+  --fs-unit: 13px;     /* units, captions */
+  --fs-caption: 13px;
+  --fs-body: 14px;
+  --fs-ui: 16px;       /* default UI text, buttons, inputs */
+  --fs-input: 17px;
+  --fs-title: 18px;    /* workout name on the HUD */
+  --fs-card: 20px;     /* workout card name */
+  --fs-stat-sm: 18px;  /* top-row numbers on phones */
+  --fs-stat: 26px;     /* secondary live numbers */
+  --fs-h2: 24px;
+  --fs-banner: 30px;
+  --fs-h1: 30px;
+  --fs-display: 40px;  /* summary title */
+  --fs-tile: 42px;     /* summary stat values */
+  --fs-hero: 132px;    /* live power */
+  --fs-hero-mid: 96px; /* live power beside the workout panel */
+  --fs-hero-compact: 56px; /* live power on phones and short screens */
+  --touch-target: 44px; /* minimum button height on touch screens */
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+  --fw-bold: 700;
+  --fw-dot: 900;
+  --lh-dot: .82;
+  --lh-tight: 1;
+  --lh-snug: 1.1;
+  --track-title: -.02em; /* headings */
+  --track-unit: .02em;
+  --track-chip: .06em;
+  --track-label: .12em;  /* uppercase mono labels */
+
+  /* spacing: --space-N = 2N px */
+  --space-unit: 6px; /* number → unit gap ("133 W") */
+  --space-1: 2px;
+  --space-2: 4px;
+  --space-3: 6px;
+  --space-4: 8px;
+  --space-5: 10px;
+  --space-6: 12px;
+  --space-7: 14px;
+  --space-8: 16px;
+  --space-9: 18px;
+  --space-10: 20px;
+  --space-11: 22px;
+  --space-12: 24px;
+  --space-14: 28px;
+  --space-16: 32px;  /* HUD inset from screen edges */
+
+  /* borders + radii */
+  --border: 1px;
+  --radius-xs: 2px;   /* tops of profile bars */
+  --radius-sm: 8px;   /* state chip */
+  --radius-step: 10px;
+  --radius-md: 12px;  /* buttons, inputs */
+  --radius-ctl: 14px; /* HUD controls, sensor chips */
+  --radius-lg: 16px;  /* stat tiles */
+  --radius-wo: 18px;  /* workout cards */
+  --radius-panel: 22px;
+  --radius-card: 22px;
+  --radius-pill: 999px;
+
+  /* depth */
+  --blur-panel: 8px;
+  --shadow-panel: 0 8px 28px rgba(0, 0, 0, .3);
+  --shadow-card: 0 12px 40px rgba(0, 0, 0, .45);
+  --shadow-text: 0 1px 2px rgba(0, 0, 0, .7), 0 0 14px rgba(0, 0, 0, .5); /* cue + banner text straight on the world */
+
+  /* motion */
+  --motion-fade: .4s;
+}

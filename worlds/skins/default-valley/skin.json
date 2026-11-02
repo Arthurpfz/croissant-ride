@@ -1,0 +1,16 @@
+{
+  "name": "Default Valley",
+  "author": "Croissant Ride",
+  "licence": "CC0-1.0",
+  "assets": "All procedural: no external models or textures",
+  "sky": { "type": "gradient", "top": "#3d7fd1", "horizon": "#cfe3ee" },
+  "fog": { "color": "#cfe3ee", "near": 400, "far": 6500 },
+  "light": { "sky": "#dbeeff", "ground": "#5a7045", "ambient": 1.6, "sun": "#fff1d6", "sunIntensity": 2.4, "sunFrom": [30, 60, 20] },
+  "ground": { "type": "valley", "grass": ["#5f8f3a", "#7aa447", "#4c7a33"], "sand": "#cdbb8a", "rock": "#8a8580", "snow": "#f2f4f6", "water": "#4f8fb8" },
+  "road": { "style": "asphalt", "surface": "#55585c", "lines": "#e8e8e8", "shoulder": "#8d7b5a" },
+  "rider": { "suit": "#1d2c5e", "accent": "#39ff88", "skin": "#d9a07a", "helmet": "#f1f3f6", "visor": "#2a3140", "shoes": "#f1f3f6" },
+  "bike": { "frame": "#22262e", "accent": "#39ff88", "parts": "#15171a", "tyres": "#15171a", "rims": "#2b2f36", "front": "deep", "rear": "disc" },
+  "props": [
+    { "type": "pines", "count": 3500, "from": 12, "patches": 0.5, "maxHeight": 170, "trunk": "#5b4030", "hue": [0.27, 0.33] }
+  ]
+}

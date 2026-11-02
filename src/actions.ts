@@ -1,0 +1,31 @@
+// Rider actions: the one list every input triggers. Keys and HUD buttons today; a clicker, the phone remote or a
+// Zwift Click later (roadmap N23) only need to call `trigger(id)`. What an action does is defined once, in main.ts.
+export type ActionId = 'pause' | 'harder' | 'easier' | 'erg' | 'skip' | 'world' | 'mute' | 'end' | 'keys';
+
+export interface Action {
+  label: string; // what it does, for the shortcuts popover
+  keys: string[]; // KeyboardEvent.key values, case-insensitive
+  button: string; // selector of its HUD button
+  run(): void;
+}
+
+let actions: Partial<Record<ActionId, Action>> = {};
+export const trigger = (id: ActionId) => actions[id]?.run();
+export const all = () => actions;
+
+// `active` says whether rider actions apply right now (keys are ignored outside a ride and while typing)
+export function bindActions(defs: Record<ActionId, Action>, active: () => boolean) {
+  actions = defs;
+  const byKey = new Map<string, ActionId>();
+  for (const [id, a] of Object.entries(defs) as [ActionId, Action][]) {
+    for (const k of a.keys) byKey.set(k.toLowerCase(), id);
+    document.querySelectorAll<HTMLElement>(a.button).forEach((b) => (b.onclick = () => trigger(id)));
+  }
+  addEventListener('keydown', (e) => {
+    if (!active() || e.metaKey || e.ctrlKey || e.altKey || (e.target as HTMLElement).tagName === 'INPUT') return;
+    const id = byKey.get(e.key.toLowerCase());
+    if (!id) return;
+    e.preventDefault();
+    trigger(id);
+  });
+}

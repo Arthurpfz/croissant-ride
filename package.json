@@ -1,0 +1,21 @@
+{
+  "name": "croissant-ride",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "three": "^0.187.0"
+  },
+  "devDependencies": {
+    "@types/three": "^0.187.0",
+    "@types/web-bluetooth": "^0.0.22",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.5"
+  },
+  "private": true,
+  "license": "Apache-2.0",
+  "type": "module"
+}

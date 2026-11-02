@@ -1,5 +1,7 @@
 # Croissant Ride
 
+![A VO₂max interval in the Night Draft world: workout steps on the left, live power on target, the road drawn in pen strokes](docs/hero.png)
+
 An indoor trainer app that runs in the browser. Pair your smart trainer and heart-rate strap, pick a structured workout, and the trainer holds your target watts (ERG) while you ride a 3D loop. At the end you get a summary and a .FIT file to post to Intervals.icu, Strava, Garmin Connect or TrainingPeaks.
 
 One rider, no accounts, no backend: everything stays in your browser.

@@ -2,7 +2,7 @@ import { live, settings, reading, dropStale, beats } from './state';
 import { workouts, totalDuration, type Workout } from './workouts';
 import { createRide } from './engine';
 import { route } from './world/route';
-import { ROUTE, skinById, skins } from './world/packs';
+import { ROUTE, routeById, skinById, switchable } from './world/packs';
 import { createWorld } from './world/scene';
 import { connectTrainer, trainer, setErg, setGrade, OBSERVE, useSimulator } from './trainer/trainer';
 import { connectHr, hrStrap } from './ble/hr';
@@ -191,8 +191,9 @@ async function startRide(w: Workout) {
     if (!confirm('No trainer or power meter connected. Ride anyway?')) return;
   }
   audio.unlock();
-  const s = skinById(savedSkin());
-  if (route.data !== ROUTE || world.skin !== s) world.show(ROUTE, s);
+  const r = routeById(w.route), s = skinById(r.skin ?? savedSkin());
+  if (route.data !== r || world.skin !== s) await world.show(r, s);
+  $('btn-world').hidden = !!r.skin; // a route with its own skin keeps it
   rec.start(`Croissant Ride — ${w.name}${DEMO ? DEMO_TAG : ''}`);
   ride.start(w);
   $('start').hidden = true;
@@ -212,7 +213,8 @@ function changeTarget(d: number) {
   hud.refreshSteps();
 }
 function nextSkin() {
-  const s = skins[(skins.indexOf(world.skin) + 1) % skins.length];
+  if (route.data.skin) return;
+  const s = switchable[(switchable.indexOf(world.skin) + 1) % switchable.length];
   try { localStorage.setItem(SKIN_KEY, s.id); } catch {}
   hud.banner(s.name, 2000);
   world.switchSkin(s);

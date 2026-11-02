@@ -5,7 +5,7 @@ import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import { route, setRoute } from './route';
-import type { RouteData, SkinData } from './packs';
+import { terrainOf, type RouteData, type SkinData } from './packs';
 import { buildSkin, type BuiltSkin } from './skin';
 import { token } from '../tokens';
 
@@ -17,10 +17,10 @@ export function createWorld(canvas: HTMLCanvasElement) {
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
 
   const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 12000);
+  const camera = new THREE.PerspectiveCamera(60, 1, 0.5, 50000); // far enough for the peaks round a real col
   const camPos = new THREE.Vector3(), look = new THREE.Vector3(), tmp = new THREE.Vector3(), roadPos = new THREE.Vector3();
   const side = new THREE.Vector3(), up = new THREE.Vector3(0, 1, 0);
-  let first = true;
+  let first = true, yaw = 0, lane = 1.6; // rider heading and side of the road, eased: a one-way road's turn is a glide
 
   // fog and lights are reused across skins (three.js caches per-light uniforms for good); the sun follows the rider
   // so its small shadow box always covers them
@@ -56,13 +56,14 @@ export function createWorld(canvas: HTMLCanvasElement) {
     for (const t of built.targets) if (ray.intersectObject(t).length) t.userData.click();
   });
 
-  // swap in a route + skin; the old skin's meshes, materials and textures are freed
-  function show(r: RouteData, s: SkinData) {
+  // swap in a route + skin (after the route's terrain has loaded); the old skin's meshes, materials and textures are freed
+  async function show(r: RouteData, s: SkinData) {
+    target = s;
+    const grids = await terrainOf(r);
     if (route?.data !== r) first = true; // camera jumps instead of gliding across the map
     setRoute(r);
-    target = s;
     if (built) { scene.remove(built.group); built.dispose(); }
-    built = buildSkin(s, route, renderer);
+    built = buildSkin(s, route, renderer, grids);
     scene.add(built.group);
     const l = s.light;
     fog.color.set(s.fog.color); fog.near = s.fog.near; fog.far = s.fog.far;
@@ -88,7 +89,7 @@ export function createWorld(canvas: HTMLCanvasElement) {
     const fade = parseFloat(token('motion-fade')) * 1000;
     canvas.classList.add('fading');
     await new Promise((r) => setTimeout(r, fade));
-    if (built.skin !== target) show(route.data, target);
+    if (built.skin !== target) await show(route.data, target);
     renderer.compile(scene, camera);
     canvas.classList.remove('fading');
     switching = false;
@@ -98,23 +99,28 @@ export function createWorld(canvas: HTMLCanvasElement) {
     renderer, show, switchSkin,
     get skin() { return target; },
     render(dt: number, distance: number, cadence: number, speed: number, effort: number) {
+      if (!built) return; // first skin still loading
       const { rider } = built;
       const { pos: q, tangent } = route.pose(distance, roadPos);
-      side.crossVectors(tangent, up).setY(0).normalize();
-      const at = q.clone().addScaledVector(side, 1.6).setY(q.y + 0.12);
+      const dir = route.dir(distance), ease = first ? 1 : 1 - Math.exp(-dt * 6), turn = Math.atan2(tangent.x, tangent.z) - yaw;
+      yaw += Math.atan2(Math.sin(turn), Math.cos(turn)) * ease; // the short way round
+      lane += (1.6 * dir - lane) * ease;
+      side.crossVectors(tangent, up).setY(0).normalize().multiplyScalar(dir); // the road's own right side, either way
+      const at = q.clone().addScaledVector(side, lane).setY(q.y + 0.12);
+      const flat = new THREE.Vector3(Math.sin(yaw), 0, Math.cos(yaw)), ahead = flat.clone().multiplyScalar(Math.hypot(tangent.x, tangent.z)).setY(tangent.y);
       rider.group.position.copy(at);
-      rider.group.lookAt(tmp.copy(at).add(tangent));
+      rider.group.lookAt(tmp.copy(at).add(ahead));
       rider.update(dt, cadence, speed, effort);
 
-      const flat = tangent.clone().setY(0).normalize();
       const want = at.clone().addScaledVector(flat, -4.2).add(new THREE.Vector3(0, 1.9, 0));
       if (built.groundAt) want.y = Math.max(want.y, built.groundAt(want.x, want.z) + 1.5);
       const k = first ? 1 : 1 - Math.exp(-dt * 3);
       camPos.lerp(want, k);
-      look.lerp(at.clone().addScaledVector(tangent, 6).add(new THREE.Vector3(0, 1.2, 0)), k);
+      look.lerp(at.clone().addScaledVector(ahead, 6).add(new THREE.Vector3(0, 1.2, 0)), k);
       first = false;
       camera.position.copy(camPos);
       camera.lookAt(look);
+      built.sky.position.copy(camPos);
       built.tick(dt, at, flat, camera);
 
       sun.position.copy(at).add(sunFrom);

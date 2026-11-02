@@ -1,0 +1,26 @@
+{
+  "name": "Le Col",
+  "author": "Croissant Ride",
+  "licence": "CC0-1.0",
+  "assets": "All procedural: no external models or textures. Terrain heights come from the route (IGN data).",
+  "sky": { "type": "gradient", "top": "#2f6fc4", "horizon": "#cad8e4" },
+  "fog": { "color": "#c3d2df", "near": 1500, "far": 32000 },
+  "light": { "sky": "#dfeeff", "ground": "#6b6650", "ambient": 1.4, "sun": "#fff4e0", "sunIntensity": 2.6, "sunFrom": [-30, 45, 25] },
+  "ground": { "type": "dem", "meadow": ["#6f8f3e", "#88a04c", "#5b7a35"], "alpine": "#8c8a58", "scree": "#9a9284", "rock": "#7d7772", "snow": "#f3f5f7", "treeline": 2100, "snowline": 2950 },
+  "road": { "style": "asphalt", "surface": "#4c4e52", "lines": "#e8e8e8", "shoulder": "#857a68" },
+  "rider": { "suit": "#2b2c30", "accent": "#e8783a", "skin": "#d9a07a", "helmet": "#ecebe6", "visor": "#2a3140", "shoes": "#ecebe6" },
+  "bike": { "frame": "#22262e", "accent": "#e8783a", "parts": "#15171a", "tyres": "#15171a", "rims": "#2b2f36", "front": "deep", "rear": "deep" },
+  "props": [
+    { "type": "pines", "count": 4000, "from": 14, "along": 1600, "patches": 0.42, "maxHeight": 2050, "maxSlope": 0.9, "trunk": "#4a3626", "hue": [0.28, 0.36] },
+    { "type": "village", "clusters": [[0, 420, 70], [3600, 110, 10], [6900, 80, 6], [10900, 50, 3]], "wall": "#bdb5a8", "wood": "#6b4a32", "roof": "#585b61", "tower": "#ddd6c8", "bakery": "#ffcf8a" },
+    { "type": "markers", "name": "COL DU GALIBIER", "face": "#f4f2ec", "cap": "#e8c547", "summit": "Col du Galibier", "altitude": 2642, "board": "#5b3b24", "plaza": "#4c4e52" },
+    { "type": "poles", "every": 30, "above": 1800, "colors": ["#c8372d", "#f4f2ec"] },
+    { "type": "walls", "drop": 3, "stone": "#9c958a" },
+    { "type": "snowbanks", "from": 17300, "height": [1.2, 2.6], "color": "#eef2f5" },
+    { "type": "chalk", "words": ["ALLEZ", "COURAGE", "ALLEZ PAPA", "VAS-Y", "ALLEZ ALLEZ", "ON LÂCHE RIEN", "BRAVO"], "from": 11500, "to": 18000, "color": "#f2f2ec" },
+    { "type": "cows", "count": 14, "from": 9400, "to": 11400, "coats": ["#9a6a43", "#f1ece2", "#6e4429"] },
+    { "type": "marmots", "count": 40, "from": 12000, "to": 18100, "fur": "#8a6a48" },
+    { "type": "ibex", "at": 17300, "chance": 0.35, "coat": "#7d6a55", "horns": "#5b4b3a" },
+    { "type": "paraglider", "every": [120, 300], "below": 1700, "wing": ["#e8783a", "#ecebe6", "#2b2c30"] }
+  ]
+}

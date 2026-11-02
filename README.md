@@ -64,6 +64,6 @@ See [CONTRIBUTING.md](CONTRIBUTING.md). [CLAUDE.md](CLAUDE.md) has a detailed ma
 
 ## Licence
 
-[Apache-2.0](LICENSE). Bundled third-party software and fonts are listed in [public/THIRD-PARTY-NOTICES.txt](public/THIRD-PARTY-NOTICES.txt).
+[Apache-2.0](LICENSE). Bundled third-party software, fonts and map data are listed in [public/THIRD-PARTY-NOTICES.txt](public/THIRD-PARTY-NOTICES.txt). The Col du Galibier contains IGN data (BD TOPO®, RGE ALTI®), Licence Ouverte 2.0.
 
 Croissant Ride is an independent project, not affiliated with or endorsed by Zwift, Strava, Garmin, TrainingPeaks, Intervals.icu or any trainer maker. Their names are used only to say which file formats and services work with it.

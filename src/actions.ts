@@ -1,5 +1,5 @@
-// Rider actions: the one list every input triggers. Keys and HUD buttons today; a clicker, the phone remote or a
-// Zwift Click later (roadmap N23) only need to call `trigger(id)`. What an action does is defined once, in main.ts.
+// Rider actions: the one list every input triggers. Keys, HUD buttons and the Zwift Click today; another remote
+// (e.g. a phone, roadmap N23) only needs to call `press(id)`. What an action does is defined once, in main.ts.
 export type ActionId = 'pause' | 'harder' | 'easier' | 'erg' | 'skip' | 'world' | 'mute' | 'end' | 'keys';
 
 export interface Action {
@@ -9,13 +9,15 @@ export interface Action {
   run(): void;
 }
 
-let actions: Partial<Record<ActionId, Action>> = {};
+let actions: Partial<Record<ActionId, Action>> = {}, active = () => false;
 export const trigger = (id: ActionId) => actions[id]?.run();
+export const press = (id: ActionId) => { if (active()) trigger(id); }; // a remote's button: only during a ride
 export const all = () => actions;
 
 // `active` says whether rider actions apply right now (keys are ignored outside a ride and while typing)
-export function bindActions(defs: Record<ActionId, Action>, active: () => boolean) {
+export function bindActions(defs: Record<ActionId, Action>, isActive: () => boolean) {
   actions = defs;
+  active = isActive;
   const byKey = new Map<string, ActionId>();
   for (const [id, a] of Object.entries(defs) as [ActionId, Action][]) {
     for (const k of a.keys) byKey.set(k.toLowerCase(), id);

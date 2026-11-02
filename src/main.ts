@@ -8,6 +8,7 @@ import { connectTrainer, trainer, setErg, setGrade, OBSERVE, useSimulator } from
 import { connectHr, hrStrap } from './ble/hr';
 import { connectPowerMeter, powerMeter, measuresPower } from './ble/power';
 import { rememberedDevices, type Sensor } from './ble/ble';
+import { click, connectClick, lastPress } from './ble/click';
 import * as hud from './hud';
 import * as rec from './recorder';
 import * as audio from './audio';
@@ -60,11 +61,12 @@ if (!SIM && !navigator.bluetooth) {
 sensorButton('c-trainer', trainer, connectTrainer);
 sensorButton('c-hr', hrStrap, connectHr);
 sensorButton('c-pm', powerMeter, connectPowerMeter);
+sensorButton('c-click', click, connectClick);
 
 // reconnect devices granted on a previous visit (no picker needed)
 rememberedDevices().then(async (devs) => {
   for (const d of devs) {
-    const tries = [connectTrainer, connectHr, connectPowerMeter];
+    const tries = [connectTrainer, connectHr, connectPowerMeter, connectClick];
     for (const c of tries) { try { await c(d); break; } catch {} }
   }
 });
@@ -73,7 +75,7 @@ rememberedDevices().then(async (devs) => {
 function renderDots() {
   const dot = (cls: string, n: string) => `<span><i class="dot ${cls}"></i>${n}</span>`;
   const sensor = (s: Sensor, n: string, chip: string) => (s.status === 'idle' ? `<button data-pair="${chip}" title="Pair ${n}">＋ ${n}</button>` : dot(s.status === 'connected' ? '' : 'wait', n));
-  $('sensor-dots').innerHTML = SIM ? dot('ring', 'simulated') : [OBSERVE ? dot('ring', 'read-only') : '', sensor(trainer, 'trainer', 'c-trainer'), sensor(hrStrap, 'HR', 'c-hr'), sensor(powerMeter, 'cadence', 'c-pm')].join('');
+  $('sensor-dots').innerHTML = SIM ? dot('ring', 'simulated') : [OBSERVE ? dot('ring', 'read-only') : '', sensor(trainer, 'trainer', 'c-trainer'), sensor(hrStrap, 'HR', 'c-hr'), sensor(powerMeter, 'cadence', 'c-pm'), click.status === 'idle' ? '' : sensor(click, 'remote', 'c-click')].join('');
 }
 $('sensor-dots').onclick = (e) => {
   const b = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-pair]');
@@ -89,6 +91,7 @@ setInterval(() => {
   show('c-trainer', trainer, `${Math.round(live.trainerPower)} W`);
   show('c-hr', hrStrap, `${live.hr} bpm`);
   show('c-pm', powerMeter, `${Math.round(live.cadence)} rpm`);
+  show('c-click', click, lastPress && `${lastPress} pressed`);
 }, 1000);
 
 const ftpIn = $<HTMLInputElement>('s-ftp'), wIn = $<HTMLInputElement>('s-weight');

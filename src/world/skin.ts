@@ -8,7 +8,8 @@ import type { Route } from './route';
 import type { SkinData } from './packs';
 import { Rider } from './rider';
 import { fbm, smooth, seeded } from './noise';
-import { buildProps, texture, type Tick } from './props';
+import { buildProps } from './props';
+import { texture, type Tick } from './kit';
 
 export interface BuiltSkin {
   skin: SkinData;

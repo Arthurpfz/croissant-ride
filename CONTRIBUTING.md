@@ -20,14 +20,14 @@ npm run build   # type-check + build; CI runs this on every pull request
 - `src/main.ts`: the screen around it (start screen, HUD, summary).
 - `src/trainer/`: trainer drivers. `src/ble/`: heart rate and cadence.
 - `src/recorder.ts` + `src/fit.ts`: recording and our own FIT writer.
-- `worlds/`: routes and skins, data only.
+- `worlds/`: routes and skins, data only. `workouts/`: the built-in sessions, one JSON file each.
 
 ## Common changes
 
 - **Add a trainer:** write a driver in `src/trainer/` that fills in `TrainerDriver` (`trainer.ts`): the Bluetooth service that identifies it, `setup`, `setErg`, `setGrade`. Add it to `drivers` in `trainer.ts`, and its service to `optionalServices` in `src/ble/ble.ts` if it's new. `ftms.ts` is the example.
-- **Add a world skin:** add `worlds/skins/<id>/skin.json` (colours, sky, ground, road, rider, bike, props). It's picked up automatically. Skins are data only: they can't run code or change physics.
+- **Add a world skin:** add `worlds/skins/<id>/skin.json` (colours, sky, ground, road, rider, bike, props). It's picked up automatically. Skins are data only: they can't run code or change physics. A new kind of scenery (e.g. windmills) is code: add `src/world/props/<type>.ts` with a default-exported builder, then use `"type": "<type>"` in a skin's `props`.
 - **Add a route:** add `worlds/routes/<id>.json` (`line` control points and `elevation`).
-- **Add a built-in workout:** add an entry in `src/workouts.ts` (steps in % of FTP).
+- **Add a built-in workout:** add `workouts/<id>.json` (`name`, `who`, `steps` in % of FTP). Copy an existing file; the step formats are described at the top of `src/workouts.ts`.
 - **Add a "Post to" service:** add a line in `src/post.ts`.
 - **Add a rider action or key:** add it in `bindActions` in `src/main.ts`; the shortcuts list builds itself.
 

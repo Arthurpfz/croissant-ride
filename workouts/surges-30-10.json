@@ -1,0 +1,13 @@
+{
+  "name": "30/10 Surges",
+  "who": "3 sets of 15 repeated surges",
+  "steps": [
+    { "warmup": 15 },
+    { "repeat": 15, "steps": [{ "sec": 30, "pct": 120, "label": "Set 1/3" }, { "sec": 10, "pct": 50 }] },
+    { "min": 5, "pct": 55 },
+    { "repeat": 15, "steps": [{ "sec": 30, "pct": 120, "label": "Set 2/3" }, { "sec": 10, "pct": 50 }] },
+    { "min": 5, "pct": 55 },
+    { "repeat": 15, "steps": [{ "sec": 30, "pct": 120, "label": "Set 3/3" }, { "sec": 10, "pct": 50 }] },
+    { "cooldown": 10 }
+  ]
+}

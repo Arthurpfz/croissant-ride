@@ -1,0 +1,12 @@
+{
+  "name": "70-min VO₂ Mix",
+  "who": "VO₂max + anaerobic · 3′, 1′, 30″ and sprints",
+  "steps": [
+    { "warmup": 20 },
+    { "repeat": 6, "steps": [{ "min": 3, "pct": 105 }, { "min": 1, "pct": 50 }] },
+    { "repeat": 5, "steps": [{ "min": 1, "pct": 115 }, { "min": 1, "pct": 50 }] },
+    { "repeat": 6, "steps": [{ "sec": 30, "pct": 130 }, { "min": 1, "pct": 50 }] },
+    { "repeat": 4, "steps": [{ "sec": 15, "pct": 150, "free": true, "label": "Sprint ~10 strokes" }, { "min": 1, "pct": 50 }] },
+    { "cooldown": 5 }
+  ]
+}

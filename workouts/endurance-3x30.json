@@ -1,0 +1,9 @@
+{
+  "name": "Endurance 3×30",
+  "who": "Aerobic base",
+  "steps": [
+    { "warmup": 15 },
+    { "repeat": 3, "lastRecovery": false, "steps": [{ "min": 30, "pct": 80 }, { "min": 5, "pct": 55 }] },
+    { "cooldown": 10 }
+  ]
+}

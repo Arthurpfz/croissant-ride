@@ -125,8 +125,8 @@ button.icon svg { width: 20px; height: 20px; fill: none; stroke: currentColor; s
 .legend { display: flex; gap: var(--space-8); flex-wrap: wrap; font-family: var(--font-mono); font-size: var(--fs-label); color: var(--muted); }
 .legend span { display: flex; align-items: center; gap: var(--space-3); }
 .legend i { width: 10px; height: 10px; border-radius: var(--radius-xs); background: var(--c); }
-.foot { margin: var(--space-14) 0 0; font-size: var(--fs-label); }
-.foot a { color: var(--muted); }
+.foot { margin: var(--space-14) 0 0; font-size: var(--fs-label); color: var(--muted); }
+.foot a { color: inherit; }
 .list { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: var(--space-8); }
 
 /* ── ride summary ─────────────────────────────────────────────────────────── */

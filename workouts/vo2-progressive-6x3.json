@@ -1,0 +1,9 @@
+{
+  "name": "Progressive VO₂ 6×3",
+  "who": "3-min reps building 110 → 120%",
+  "steps": [
+    { "warmup": 10 },
+    { "repeat": 6, "lastRecovery": false, "steps": [{ "min": 3, "pct": [110, 112, 114, 116, 118, 120] }, { "min": 2, "pct": 50 }] },
+    { "cooldown": 5 }
+  ]
+}

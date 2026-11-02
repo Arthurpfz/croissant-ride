@@ -4,7 +4,7 @@ import { settings } from './state';
 // Workout library (% FTP). `to` = ramp end, `free` = no ERG (sprints / free ride), `rep` = "2 of 3" label,
 // `notes` = coach messages [s into the step, text] (from imported .zwo textevents).
 export interface Step { dur: number; from: number; to?: number; free?: boolean; label?: string; rep?: [number, number]; notes?: [number, string][] }
-export interface Workout { id: string; name: string; who: string; steps: Step[] }
+export interface Workout { id: string; name: string; who: string; steps: Step[]; route?: string } // route: worlds/routes id (default: the flat loop)
 
 // Built-in sessions: one JSON file each in `workouts/`, in % FTP. A step is { min | sec, pct, free?, label? },
 // { warmup: min } (50 → 75 %), { cooldown: min } (60 → 40 %) or { repeat: n, steps, lastRecovery? }: the repeat's
@@ -29,6 +29,7 @@ const files = import.meta.glob<{ name: string; who: string; steps: FileStep[] }>
 export const workouts: Workout[] = [
   ...Object.entries(files).map(([p, w]) => ({ id: p.slice(p.lastIndexOf('/') + 1, -5), name: w.name, who: w.who, steps: w.steps.flatMap((st) => expand(st)) })),
   { id: 'free', name: 'Free Ride', who: 'Just ride the loop', steps: [] },
+  { id: 'galibier', name: 'Col du Galibier', who: 'Valloire → 2,642 m · 18 km at 7 % · map data IGN', steps: [], route: 'galibier' },
 ];
 
 // target watts: % FTP plus the rider's −/+ offset (10 W steps)

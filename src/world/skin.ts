@@ -5,7 +5,7 @@ import { Line2 } from 'three/addons/lines/Line2.js';
 import { LineGeometry } from 'three/addons/lines/LineGeometry.js';
 import { LineMaterial } from 'three/addons/lines/LineMaterial.js';
 import type { Route } from './route';
-import type { SkinData } from './packs';
+import type { SkinData, TerrainGrid } from './packs';
 import { Rider } from './rider';
 import { fbm, smooth, seeded } from './noise';
 import { buildProps } from './props';
@@ -15,21 +15,23 @@ export interface BuiltSkin {
   skin: SkinData;
   group: THREE.Group;
   rider: Rider;
+  sky: THREE.Object3D; // follows the camera
   groundAt?: (x: number, z: number) => number;
   tick: Tick; // animated props
   targets: THREE.Object3D[]; // clickable props (userData.click)
   dispose(): void;
 }
 
-export function buildSkin(skin: SkinData, route: Route, renderer: THREE.WebGLRenderer): BuiltSkin {
+export function buildSkin(skin: SkinData, route: Route, renderer: THREE.WebGLRenderer, grids: TerrainGrid[] = []): BuiltSkin {
   const group = new THREE.Group();
   const rand = seeded(1);
   const extra: { dispose(): void }[] = []; // GPU objects that are not part of a mesh (env maps)
 
   // sky
   const sky = () => (skin.sky.type === 'gradient' ? gradientSky(skin.sky.top, skin.sky.horizon) : nebulaSky(skin.sky.colors));
-  group.add(sky());
-  if (skin.sky.stars) group.add(stars(skin.sky.stars, rand));
+  const skyGroup = new THREE.Group().add(sky());
+  if (skin.sky.stars) skyGroup.add(stars(skin.sky.stars, rand));
+  group.add(skyGroup);
 
   // ground
   let groundAt: BuiltSkin['groundAt'];
@@ -40,6 +42,9 @@ export function buildSkin(skin: SkinData, route: Route, renderer: THREE.WebGLRen
     const base = Math.min(...route.data.elevation) - 1.2;
     groundAt = toRoad(route, () => base);
     group.add(...ridges(skin.ground, groundAt, base));
+  } else if (skin.ground.type === 'dem') {
+    groundAt = toRoad(route, demHeight(grids), 6, 30);
+    group.add(...dem(skin.ground, grids, groundAt));
   }
 
   // road
@@ -62,7 +67,7 @@ export function buildSkin(skin: SkinData, route: Route, renderer: THREE.WebGLRen
   group.add(rider.group);
 
   return {
-    skin, group, rider, groundAt, tick: props.tick, targets: props.targets,
+    skin, group, sky: skyGroup, rider, groundAt, tick: props.tick, targets: props.targets,
     dispose() {
       group.traverse((o) => {
         const m = o as THREE.Mesh;
@@ -80,7 +85,7 @@ export function buildSkin(skin: SkinData, route: Route, renderer: THREE.WebGLRen
 }
 
 // --- sky -------------------------------------------------------------------------
-const SKY_R = 9000;
+const SKY_R = 40000;
 
 function gradientSky(topHex: string, horizonHex: string) {
   const geo = new THREE.SphereGeometry(SKY_R, 24, 12);
@@ -145,11 +150,11 @@ const WATER = -3;
 
 type Height = (x: number, z: number) => number;
 
-// ground that meets the road: just under it near the road, blending out to `far` 18–140 m away
-function toRoad(route: Route, far: Height): Height {
+// ground that meets the road: just under it near the road, blending out to `far` between `near` and `out` metres away
+function toRoad(route: Route, far: Height, near = 18, out = 140): Height {
   return (x, z) => {
     const { dist, e } = route.nearRoad(x, z);
-    const b = smooth(18, 140, dist);
+    const b = smooth(near, out, dist);
     return (e - 1.2) * (1 - b) + far(x, z) * b;
   };
 }
@@ -199,6 +204,55 @@ function valley(g: Extract<SkinData['ground'], { type: 'valley' }>, height: Heig
   water.rotation.x = -Math.PI / 2;
   water.position.y = WATER;
   return [terrain, water];
+}
+
+// real ground from a route's height grids (bilinear; the finest grid that covers the point wins)
+function demHeight(grids: TerrainGrid[]): Height {
+  return (x, z) => {
+    for (const g of grids) {
+      const fx = (x - g.x0) / g.cell, fz = (z - g.z0) / g.cell;
+      if (fx < 0 || fz < 0 || fx > g.nx - 1 || fz > g.nz - 1) continue;
+      const i = Math.min(g.nx - 2, Math.floor(fx)), j = Math.min(g.nz - 2, Math.floor(fz)), u = fx - i, v = fz - j, k = j * g.nx + i, h = g.h;
+      return ((h[k] * (1 - u) + h[k + 1] * u) * (1 - v) + (h[k + g.nx] * (1 - u) + h[k + g.nx + 1] * u) * v) / 10;
+    }
+    return 0;
+  };
+}
+
+// one mesh per grid, coloured by height, steepness and the way a slope faces; a coarse grid sinks out of sight under a finer one
+function dem(g: Extract<SkinData['ground'], { type: 'dem' }>, grids: TerrainGrid[], height: Height) {
+  const meadow = g.meadow.map((h) => new THREE.Color(h));
+  const alpine = new THREE.Color(g.alpine), scree = new THREE.Color(g.scree), rock = new THREE.Color(g.rock), snow = new THREE.Color(g.snow), c = new THREE.Color();
+  return grids.map((grid, k) => {
+    const w = (grid.nx - 1) * grid.cell, d = (grid.nz - 1) * grid.cell;
+    const geo = new THREE.PlaneGeometry(w, d, grid.nx - 1, grid.nz - 1);
+    geo.rotateX(-Math.PI / 2);
+    geo.translate(grid.x0 + w / 2, 0, grid.z0 + d / 2);
+    const pos = geo.attributes.position;
+    const under = (x: number, z: number) => grids.slice(0, k).some((f) =>
+      x > f.x0 + grid.cell && z > f.z0 + grid.cell && x < f.x0 + (f.nx - 1) * f.cell - grid.cell && z < f.z0 + (f.nz - 1) * f.cell - grid.cell);
+    for (let i = 0; i < pos.count; i++) {
+      const x = pos.getX(i), z = pos.getZ(i);
+      pos.setY(i, height(x, z) - (under(x, z) ? 60 : 0));
+    }
+    geo.computeVertexNormals();
+    const nrm = geo.attributes.normal, cols: number[] = [];
+    for (let i = 0; i < pos.count; i++) {
+      const x = pos.getX(i), z = pos.getZ(i), h = pos.getY(i), ny = nrm.getY(i), north = -nrm.getZ(i);
+      const n1 = fbm(x / 180, z / 180), n2 = fbm(x / 45, z / 45);
+      c.copy(meadow[0]).lerp(meadow[1], n1).lerp(meadow[2], n2 * 0.5);
+      c.lerp(alpine, smooth(g.treeline - 150, g.treeline + 250, h + (n1 - 0.5) * 200));
+      c.lerp(scree, smooth(0.9, 0.78, ny));
+      c.lerp(rock, smooth(0.78, 0.62, ny));
+      const line = g.snowline - north * 350 + (n2 - 0.5) * 250; // snow sits lower on north faces, never on cliffs
+      c.lerp(snow, smooth(line, line + 120, h) * smooth(0.45, 0.6, ny));
+      cols.push(c.r, c.g, c.b);
+    }
+    geo.setAttribute('color', new THREE.Float32BufferAttribute(cols, 3));
+    const mesh = new THREE.Mesh(geo, new THREE.MeshLambertMaterial({ vertexColors: true, flatShading: true }));
+    mesh.receiveShadow = true;
+    return mesh;
+  });
 }
 
 // flat ground plus rings of hill silhouettes on the horizon (back to front), each one flat, unlit grey

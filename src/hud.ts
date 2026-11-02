@@ -129,7 +129,7 @@ export function drawMinimap(cv: HTMLCanvasElement) {
     const [x, y] = P(s.x, s.z);
     i ? g.lineTo(x, y) : g.moveTo(x, y);
   });
-  g.closePath();
+  if (!route.data.oneWay) g.closePath();
   g.strokeStyle = token('map-route'); g.stroke();
   const i = Math.floor(route.frac(live.distance) * samples.length) % samples.length;
   g.beginPath(); // the part of this lap already ridden

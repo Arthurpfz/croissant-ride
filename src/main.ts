@@ -2,7 +2,7 @@ import { live, settings, reading, dropStale, beats } from './state';
 import { workouts, totalDuration, type Workout } from './workouts';
 import { createRide } from './engine';
 import { route } from './world/route';
-import { ROUTE, skinById, skins } from './world/packs';
+import { ROUTE, routeById, skinById, skins } from './world/packs';
 import { createWorld } from './world/scene';
 import { connectTrainer, trainer, setErg, setGrade, OBSERVE, useSimulator } from './trainer/trainer';
 import { connectHr, hrStrap } from './ble/hr';
@@ -58,7 +58,11 @@ if (!SIM && !navigator.bluetooth) {
   $('no-bt').textContent = ios
     ? 'iPhone and iPad browsers can’t connect to Bluetooth sensors. Use the Bluefy browser app, or ride from a Mac, PC or Android phone in Chrome.'
     : 'This browser can’t connect to Bluetooth sensors. Open this page in Chrome or Edge to pair your trainer.';
+  $('no-bt').textContent += ' The demo works here.';
 }
+// Demo = the simulator (?sim=1), for visitors without a trainer
+if (SIM) $('demo').innerHTML = '<span>Demo: simulated trainer, heart rate and rider · <a href="/">Exit demo</a></span>';
+else $('btn-demo').onclick = () => { location.search = '?sim=1'; };
 sensorButton('c-trainer', trainer, connectTrainer);
 sensorButton('c-hr', hrStrap, connectHr);
 sensorButton('c-pm', powerMeter, connectPowerMeter);
@@ -181,8 +185,9 @@ async function startRide(w: Workout) {
     if (!confirm('No trainer or power meter connected. Ride anyway?')) return;
   }
   audio.unlock();
-  const s = skinById(savedSkin());
-  if (route.data !== ROUTE || world.skin !== s) world.show(ROUTE, s);
+  const r = routeById(w.route), s = skinById(r.skin ?? savedSkin());
+  if (route.data !== r || world.skin !== s) await world.show(r, s);
+  $('btn-world').hidden = !!r.skin; // a route with its own skin keeps it
   rec.start(`Croissant Ride — ${w.name}`);
   ride.start(w);
   $('start').hidden = true;
@@ -202,6 +207,7 @@ function changeTarget(d: number) {
   hud.refreshSteps();
 }
 function nextSkin() {
+  if (route.data.skin) return;
   const s = skins[(skins.indexOf(world.skin) + 1) % skins.length];
   try { localStorage.setItem(SKIN_KEY, s.id); } catch {}
   hud.banner(s.name, 2000);

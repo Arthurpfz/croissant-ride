@@ -1,12 +1,12 @@
 # Croissant Ride
 
-![A VO₂max interval in the Night Draft world: workout steps on the left, live power on target, the road drawn in pen strokes](docs/hero.png)
+![15 seconds of a VO₂max interval: the Night Draft world, then a switch to Cosmic Circuit mid-ride](docs/demo.gif)
 
 An indoor trainer app that runs in the browser. Pair your smart trainer and heart-rate strap, pick a structured workout, and the trainer holds your target watts (ERG) while you ride a 3D loop. At the end you get a summary and a .FIT file to post to Intervals.icu, Strava, Garmin Connect or TrainingPeaks.
 
 One rider, no accounts, no backend: everything stays in your browser.
 
-**Try it:** [ride.arthurpfz.com](https://ride.arthurpfz.com) (add `?sim=1` to try it without a trainer).
+**Try it:** [ride.arthurpfz.com](https://ride.arthurpfz.com) · **No trainer?** Try the [demo](https://ride.arthurpfz.com/?sim=1): a simulated trainer, heart rate and rider.
 
 ## Features
 
@@ -14,7 +14,7 @@ One rider, no accounts, no backend: everything stays in your browser.
 - **Live data:** power (3 s average), heart rate, cadence, virtual speed and distance; target, time left in the step and the whole workout as a bar chart.
 - **Rider controls:** target ±10 W, ride a step by feel (ERG off), skip, pause. Keyboard shortcuts; a Bluetooth presentation clicker or the original Zwift Click works as a handlebar remote.
 - **Cues:** a 3-2-1 countdown, a beep and a spoken summary before each step change. ERG is released automatically when cadence drops too low (and comes back when you spin up).
-- **Worlds:** three switchable looks (valley, space, night sketch), generated in code.
+- **Worlds:** three switchable looks (night sketch, space, valley), generated in code.
 - **Recording:** 1 s samples, saved every 5 s so a crash or closed tab doesn't lose the ride; FIT export with laps per step and heart-rate variability (RR intervals).
 - **Summary:** power against the targets, time in each zone, NP, TSS, average heart rate; "Post to" buttons that download the file and open the site's upload page.
 

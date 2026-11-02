@@ -28,9 +28,9 @@
     <div id="center">
     <section id="data" class="panel">
       <div class="row top">
-        <div><b id="d-speed">0</b><small>km/h</small></div>
-        <div><b id="d-dist">0.0</b><small>km</small></div>
-        <div><b id="d-ascent">0</b><small>m ↗</small></div>
+        <div><b id="d-speed">0</b><small data-unit="speed">km/h</small></div>
+        <div><b id="d-dist">0.0</b><small data-unit="dist">km</small></div>
+        <div><b id="d-ascent">0</b><small data-unit="height" data-suffix=" ↗">m ↗</small></div>
         <div><b id="d-time">0:00</b></div>
       </div>
       <div class="row mid">
@@ -70,7 +70,6 @@
     <div id="keys" class="panel" hidden>
       <small class="label">Shortcuts</small>
       <table id="keys-list"></table>
-      <p>A presentation clicker works too: Page Up/Down change the target. So does a remote control paired on the start screen (e.g. the original Zwift Click): ＋ and −.</p>
     </div>
   </div>
 
@@ -81,7 +80,7 @@
         <h1><img class="logo" src="/logo.svg" alt="" />Croissant Ride</h1>
         <div class="settings">
           <label>FTP <input id="s-ftp" type="number" min="100" max="500" /> W</label>
-          <label>Weight <input id="s-weight" type="number" min="40" max="150" /> kg</label>
+          <span class="field"><label for="s-weight">Weight</label><input id="s-weight" type="number" /><button id="s-units" class="unit-switch" type="button" data-unit="weight">kg</button></span>
           <span id="s-wkg" class="pill"></span>
         </div>
       </header>

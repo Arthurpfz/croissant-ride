@@ -4,7 +4,8 @@ export type ActionId = 'pause' | 'harder' | 'easier' | 'erg' | 'skip' | 'world' 
 
 export interface Action {
   label: string; // what it does, for the shortcuts popover
-  keys: string[]; // KeyboardEvent.key values, case-insensitive
+  keys: string[]; // KeyboardEvent.key values, case-insensitive; listed in the shortcuts popover
+  more?: string[]; // also work, not listed (what presentation clickers send)
   button: string; // selector of its HUD button
   run(): void;
 }
@@ -20,7 +21,7 @@ export function bindActions(defs: Record<ActionId, Action>, isActive: () => bool
   active = isActive;
   const byKey = new Map<string, ActionId>();
   for (const [id, a] of Object.entries(defs) as [ActionId, Action][]) {
-    for (const k of a.keys) byKey.set(k.toLowerCase(), id);
+    for (const k of [...a.keys, ...(a.more ?? [])]) byKey.set(k.toLowerCase(), id);
     document.querySelectorAll<HTMLElement>(a.button).forEach((b) => (b.onclick = () => trigger(id)));
   }
   addEventListener('keydown', (e) => {

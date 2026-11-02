@@ -9,6 +9,7 @@ import { connectHr, hrStrap } from './ble/hr';
 import { connectPowerMeter, powerMeter, measuresPower } from './ble/power';
 import { rememberedDevices, type Sensor } from './ble/ble';
 import { click, connectClick, lastPress } from './ble/click';
+import * as units from './units';
 import * as hud from './hud';
 import * as rec from './recorder';
 import * as audio from './audio';
@@ -95,11 +96,16 @@ setInterval(() => {
 }, 1000);
 
 const ftpIn = $<HTMLInputElement>('s-ftp'), wIn = $<HTMLInputElement>('s-weight');
-ftpIn.value = String(settings.ftp); wIn.value = String(settings.weight);
+ftpIn.value = String(settings.ftp);
+// weight shows in kg or lb (the switch next to it flips every unit); settings keep kg
+const showWeight = () => { wIn.value = String(units.weight(settings.weight)); wIn.min = String(units.weight(40)); wIn.max = String(units.weight(150)); units.label(); };
+showWeight();
+$('s-units').onclick = () => { units.setImperial(!units.imperial); showWeight(); };
+$('s-units').title = 'Switch units (kg, km/h, km, m ⇄ lb, mph, mi, ft)';
 const wkg = () => { $('s-wkg').textContent = `${(settings.ftp / settings.weight).toFixed(2)} W/kg`; };
 ftpIn.onchange = wIn.onchange = () => {
   settings.ftp = Number(ftpIn.value) || settings.ftp;
-  settings.weight = Number(wIn.value) || settings.weight;
+  settings.weight = units.toKg(Number(wIn.value)) || settings.weight;
   settings.save();
   wkg();
 };
@@ -228,9 +234,9 @@ addEventListener('pointerdown', (e) => { if (!(e.target as Element).closest('#ke
 // Page Up/Down and B/. are what presentation clickers send, so a €15 clicker works as a handlebar remote
 bindActions({
   pause: { label: 'Pause / resume', keys: [' '], button: '#btn-pause', run: togglePause },
-  harder: { label: 'Target +10 W', keys: ['+', '=', 'PageUp', 'ArrowUp'], button: '[data-bias="1"]', run: () => changeTarget(10) },
-  easier: { label: 'Target −10 W', keys: ['-', 'PageDown', 'ArrowDown'], button: '[data-bias="-1"]', run: () => changeTarget(-10) },
-  erg: { label: 'ERG ⇄ ride by feel for this step', keys: ['e', 'b', '.'], button: '#btn-erg', run: ride.toggleErg },
+  harder: { label: 'Target +10 W', keys: ['+', 'ArrowUp'], more: ['=', 'PageUp'], button: '[data-bias="1"]', run: () => changeTarget(10) },
+  easier: { label: 'Target −10 W', keys: ['-', 'ArrowDown'], more: ['PageDown'], button: '[data-bias="-1"]', run: () => changeTarget(-10) },
+  erg: { label: 'ERG ⇄ ride by feel for this step', keys: ['e'], more: ['b', '.'], button: '#btn-erg', run: ride.toggleErg },
   skip: { label: 'Skip step', keys: [], button: '#btn-skip', run: ride.skip },
   world: { label: 'Next world', keys: ['w'], button: '#btn-world', run: nextSkin },
   mute: { label: 'Mute audio cues', keys: ['m'], button: '#btn-mute', run: toggleMute },
@@ -358,7 +364,7 @@ function finish() {
   $('summary').hidden = false;
   $('sum-title').textContent = r.name.replace('Croissant Ride — ', '');
   const cells: [string, string, string][] = [
-    [`${Math.floor(st.secs / 3600)}:${String(Math.floor((st.secs % 3600) / 60)).padStart(2, '0')}`, 'h', 'time'], [(st.distance / 1000).toFixed(1), 'km', 'distance'], [String(Math.round(st.ascent)), 'm', 'climbed'],
+    [`${Math.floor(st.secs / 3600)}:${String(Math.floor((st.secs % 3600) / 60)).padStart(2, '0')}`, 'h', 'time'], [units.dist(st.distance), units.unit('dist'), 'distance'], [units.height(st.ascent), units.unit('height'), 'climbed'],
     [String(Math.round(st.avgPower)), 'W', 'avg power'], [String(Math.round(st.np)), 'W', 'normalized'], [st.tss.toFixed(0), '', 'TSS'],
     [st.avgHr ? String(Math.round(st.avgHr)) : '—', 'bpm', 'avg HR'], [st.maxHr ? String(st.maxHr) : '—', 'bpm', 'max HR'], [String(Math.round(st.kj)), 'kJ', 'work'],
   ];

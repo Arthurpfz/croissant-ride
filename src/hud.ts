@@ -3,6 +3,7 @@ import { live, settings } from './state';
 import { at, totalDuration, zoneColor, watts, type Workout, type Step } from './workouts';
 import { route, type Route } from './world/route';
 import { token } from './tokens';
+import { speed, dist, height } from './units';
 
 const $ = (id: string) => document.getElementById(id)!;
 export const fmt = (s: number) => {
@@ -71,9 +72,9 @@ export function update(w: Workout, wT: number, offset: number, target: number | 
   $('workout').hidden = !T;
 
   // live data
-  $('d-speed').textContent = (live.speed * 3.6).toFixed(0);
-  $('d-dist').textContent = (live.distance / 1000).toFixed(1);
-  $('d-ascent').textContent = live.ascent.toFixed(0);
+  $('d-speed').textContent = speed(live.speed);
+  $('d-dist').textContent = dist(live.distance);
+  $('d-ascent').textContent = height(live.ascent);
   $('d-time').textContent = fmt(live.elapsed);
   $('d-power').textContent = Math.round(live.power3s).toString();
   $('d-hr').textContent = live.hr ? String(live.hr) : '—';

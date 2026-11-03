@@ -1,0 +1,19 @@
+{
+  "name": "Silver Col",
+  "author": "Croissant Ride",
+  "licence": "CC0-1.0",
+  "assets": "All procedural: no external models or textures. Terrain heights come from the route (IGN data).",
+  "sky": { "type": "gradient", "top": "#d8d8d8", "horizon": "#c2c2c2" },
+  "fog": { "color": "#c2c2c2", "near": 3000, "far": 40000 },
+  "light": { "sky": "#ffffff", "ground": "#6a6a6a", "ambient": 1.5, "sun": "#ffffff", "sunIntensity": 3.6, "sunFrom": [-30, 22, -14] },
+  "ground": { "type": "dem", "meadow": ["#6e6e6e", "#747474", "#6a6a6a"], "alpine": "#626262", "scree": "#565656", "rock": "#464646", "snow": "#626262", "treeline": 2100, "snowline": 9000 },
+  "road": { "style": "asphalt", "surface": "#3a3b3f", "lines": "#c4c4c4", "shoulder": "#55565a" },
+  "rider": { "suit": "#c4c8ce", "accent": "#e8783a", "skin": "#b4b8be", "helmet": "#e2e5e9", "visor": "#2a2d33", "shoes": "#e2e5e9" },
+  "bike": { "frame": "#c9ccd1", "accent": "#e8783a", "parts": "#6c7076", "tyres": "#2a2b2e", "rims": "#b8bcc2", "front": "deep", "rear": "deep" },
+  "props": [
+    { "type": "markers", "name": "COL DU GALIBIER", "face": "#e6e6e6", "cap": "#e8783a", "summit": "Col du Galibier", "altitude": 2642, "board": "#5a5a5a", "plaza": "#3a3b3f" },
+    { "type": "poles", "every": 30, "above": 1800, "colors": ["#e8783a", "#ececec"] },
+    { "type": "walls", "drop": 3, "stone": "#b4b4b4" },
+    { "type": "chalk", "words": ["ALLEZ", "COURAGE", "ALLEZ PAPA", "VAS-Y", "ALLEZ ALLEZ", "ON LÂCHE RIEN", "BRAVO"], "from": 11500, "to": 18000, "color": "#f2f2ec" }
+  ]
+}

@@ -2,7 +2,7 @@ import { live, settings, reading, dropStale, beats } from './state';
 import { workouts, totalDuration, type Workout } from './workouts';
 import { createRide } from './engine';
 import { route } from './world/route';
-import { ROUTE, routeById, skinById, switchable } from './world/packs';
+import { ROUTE, routeById, skinById, skinsFor, type RouteData } from './world/packs';
 import { createWorld } from './world/scene';
 import { connectTrainer, trainer, setErg, setGrade, OBSERVE, useSimulator } from './trainer/trainer';
 import { connectHr, hrStrap } from './ble/hr';
@@ -42,9 +42,13 @@ const ride = createRide({
   announce: (st) => audio.say(audio.describe(st, ride.offset)),
   banner: hud.banner,
 });
-const SKIN_KEY = 'world-skin'; // last skin picked
-const savedSkin = () => { try { return localStorage.getItem(SKIN_KEY); } catch { return null; } };
-const backdrop = world.show(ROUTE, skinById(savedSkin())); // start-screen backdrop (async: loads terrain)
+const skinKey = (r: RouteData) => (r === ROUTE ? 'world-skin' : `world-skin-${r.id}`); // last skin picked, per route
+const skinFor = (r: RouteData) => { // the route's last pick if it still fits, else its own default
+  let id: string | null = null;
+  try { id = localStorage.getItem(skinKey(r)); } catch {}
+  return skinsFor(r).find((s) => s.id === id) ?? skinById(r.skin);
+};
+const backdrop = world.show(ROUTE, skinFor(ROUTE)); // start-screen backdrop (async: loads terrain)
 
 // --- start screen -----------------------------------------------------------
 function sensorButton(id: string, sensor: Sensor, connect: (d?: BluetoothDevice) => Promise<BluetoothDevice>) {
@@ -192,9 +196,9 @@ async function startRide(w: Workout) {
     if (!confirm('No trainer or power meter connected. Ride anyway?')) return;
   }
   audio.unlock();
-  const r = routeById(w.route), s = skinById(r.skin ?? savedSkin());
+  const r = routeById(w.route), s = skinFor(r);
   if (route?.data !== r || world.skin !== s) await world.show(r, s);
-  $('btn-world').hidden = !!r.skin; // a route with its own skin keeps it
+  $('btn-world').hidden = skinsFor(r).length < 2;
   rec.start(`Croissant Ride — ${w.name}${DEMO ? DEMO_TAG : ''}`);
   ride.start(w);
   $('start').hidden = true;
@@ -214,9 +218,10 @@ function changeTarget(d: number) {
   hud.refreshSteps();
 }
 function nextSkin() {
-  if (route.data.skin) return;
-  const s = switchable[(switchable.indexOf(world.skin) + 1) % switchable.length];
-  try { localStorage.setItem(SKIN_KEY, s.id); } catch {}
+  const fit = skinsFor(route.data);
+  if (fit.length < 2) return;
+  const s = fit[(fit.indexOf(world.skin) + 1) % fit.length];
+  try { localStorage.setItem(skinKey(route.data), s.id); } catch {}
   hud.banner(s.name, 2000);
   world.switchSkin(s);
 }

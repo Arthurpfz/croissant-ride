@@ -6,7 +6,7 @@ export interface RouteData {
   line: [number, number][]; // control points, x/z metres: a closed loop, or a one-way road from start to end
   elevation: number[]; // metres, evenly spaced along the road (a loop wraps around)
   oneWay?: boolean; // ride to the end, turn round, ride back
-  skin?: string; // the route's own skin: no world switch on it
+  skin?: string; // the route's default skin (`W` cycles the others that fit it)
   terrain?: Grid[]; // real ground heights, finest grid first
   licence?: string;
   credit?: string;
@@ -51,7 +51,7 @@ export const skins: SkinData[] = Object.entries(skinFiles).map(([p, s]) => ({ ..
 export const DEFAULT_SKIN = 'night-draft';
 export const ROUTE = routes.find((r) => r.id === 'valley-flat')!; // every ride's route unless its workout names one
 export const routeById = (id?: string) => routes.find((r) => r.id === id) ?? ROUTE;
-export const switchable = skins.filter((s) => s.ground.type !== 'dem'); // the world-switch cycle: a `dem` skin needs its route's terrain
+export const skinsFor = (r: RouteData) => skins.filter((s) => (s.ground.type === 'dem') === !!r.terrain); // the world-switch cycle: a `dem` skin needs a route's terrain, and only it fits one
 export const skinById = (id?: string | null) => skins.find((s) => s.id === id) ?? skins.find((s) => s.id === DEFAULT_SKIN)!;
 
 const terrains = new Map<string, Promise<TerrainGrid[]>>();

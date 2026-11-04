@@ -1,0 +1,41 @@
+name: Something went wrong on a ride
+description: The trainer, a sensor, the workout or the .FIT didn't do what you expected.
+labels: [ride report]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you expected, what happened instead, and roughly when in the ride.
+    validations:
+      required: true
+  - type: input
+    id: workout
+    attributes:
+      label: Workout or route
+      placeholder: e.g. 7×10 Threshold, Col du Galibier, an imported .zwo
+  - type: input
+    id: trainer
+    attributes:
+      label: Trainer
+      placeholder: e.g. Van Rysel D100, Wahoo Kickr Core
+    validations:
+      required: true
+  - type: input
+    id: sensors
+    attributes:
+      label: Other sensors
+      placeholder: e.g. Garmin HRM-Pro, Quarq power meter, Zwift Click
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and device
+      placeholder: e.g. Chrome 142 on a 2015 MacBook Air, Edge on Windows 11, Chrome on a Pixel 8
+    validations:
+      required: true
+  - type: textarea
+    id: log
+    attributes:
+      label: Console log (optional)
+      description: Open the app with `?debug=1` (e.g. croissantride.com/?debug=1), ride until it happens again, then copy the browser console (F12 → Console). It shows the Bluetooth packets and trainer commands.
+      render: text

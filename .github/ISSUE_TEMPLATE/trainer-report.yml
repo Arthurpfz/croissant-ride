@@ -1,0 +1,39 @@
+name: My trainer works (or doesn't)
+description: Tell us how Croissant Ride runs with your trainer or sensors, so others know what to expect.
+labels: [hardware]
+body:
+  - type: input
+    id: trainer
+    attributes:
+      label: Trainer or sensor
+      placeholder: e.g. Elite Suito-T, Tacx Flux S, Polar H10
+    validations:
+      required: true
+  - type: dropdown
+    id: pairs
+    attributes:
+      label: Does it pair?
+      options: ["Yes", "No, it doesn't show in the picker", "It pairs, then drops"]
+    validations:
+      required: true
+  - type: checkboxes
+    id: works
+    attributes:
+      label: What works
+      options:
+        - label: Power reads
+        - label: Cadence reads
+        - label: ERG holds the target
+        - label: Gradient (Free Ride, Le Col) changes the resistance
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and device
+      placeholder: e.g. Chrome 142 on macOS
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Anything else
+      description: How closely ERG holds the target, lag on short steps, anything odd. A `?debug=1` console log helps when something doesn't work.

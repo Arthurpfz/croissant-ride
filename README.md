@@ -6,7 +6,7 @@ An indoor trainer app that runs in the browser. Pair your smart trainer and hear
 
 One rider, no accounts, no backend: everything stays in your browser.
 
-**Try it:** [croissantride.app](https://croissantride.app) · **No trainer?** Pick any workout and choose demo mode: a simulated trainer, heart rate and rider.
+**Try it:** [croissantride.com](https://croissantride.com) · **No trainer?** Pick any workout and choose demo mode: a simulated trainer, heart rate and rider.
 
 ## Features
 

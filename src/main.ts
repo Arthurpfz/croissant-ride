@@ -69,6 +69,8 @@ if (!SIM && !navigator.bluetooth) {
     : 'This browser can’t connect to Bluetooth sensors. Open this page in Chrome or Edge to pair your trainer.';
   $('no-bt').textContent += ' You can still pick a workout to try it in demo mode.';
 }
+$('impressum').hidden = !import.meta.env.VITE_IMPRESSUM_URL;
+$('privacy').hidden = !import.meta.env.VITE_PRIVACY_URL;
 sensorButton('c-trainer', trainer, connectTrainer);
 sensorButton('c-hr', hrStrap, connectHr);
 sensorButton('c-pm', powerMeter, connectPowerMeter);

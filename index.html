@@ -4,6 +4,15 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Croissant Ride</title>
+  <meta name="description" content="An indoor trainer app in the browser: pair your smart trainer, ride structured workouts in ERG and post the .FIT. Free, no account." />
+  <link rel="canonical" href="%VITE_SITE_URL%/" vite-ignore />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Croissant Ride" />
+  <meta property="og:title" content="Croissant Ride" />
+  <meta property="og:description" content="An indoor trainer app in the browser: pair your smart trainer, ride structured workouts in ERG and post the .FIT. Free, no account." />
+  <meta property="og:url" content="%VITE_SITE_URL%/" />
+  <meta property="og:image" content="%VITE_SITE_URL%/og.png" vite-ignore />
+  <meta name="twitter:card" content="summary_large_image" />
   <link rel="icon" href="/logo.svg" />
   <link rel="stylesheet" href="/src/style.css" />
 </head>
@@ -101,7 +110,7 @@
       </div>
       <div id="list" class="list"></div>
       <input id="zwo-file" type="file" accept=".zwo" multiple hidden>
-      <p class="foot">No account, no tracking: your settings and rides stay in this browser until you post a ride. · <a href="/THIRD-PARTY-NOTICES.txt" target="_blank" rel="noopener">Licences</a></p>
+      <p class="foot">No account, no tracking: your settings and rides stay in this browser until you post a ride. · <a href="/THIRD-PARTY-NOTICES.txt" target="_blank" rel="noopener">Licences</a><span id="impressum" hidden> · <a href="%VITE_IMPRESSUM_URL%" target="_blank" rel="noopener">Impressum</a></span><span id="privacy" hidden> · <a href="%VITE_PRIVACY_URL%" target="_blank" rel="noopener">Privacy</a></span><br />Ride within your limits: check with a doctor before hard training, and stop if anything feels wrong.</p>
     </div>
   </div>
 

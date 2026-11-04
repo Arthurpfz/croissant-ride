@@ -4,3 +4,24 @@
 
 [build.environment]
   NODE_VERSION = "22"
+
+# The hosted copy lives at croissantride.app. Old addresses (still domain aliases on the
+# Netlify project) send riders there. These rules only match those hosts, so a copy
+# hosted anywhere else is unaffected.
+[[redirects]]
+  from = "https://ride.arthurpfz.com/*"
+  to = "https://croissantride.app/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://croissantride.com/*"
+  to = "https://croissantride.app/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://www.croissantride.com/*"
+  to = "https://croissantride.app/:splat"
+  status = 301
+  force = true

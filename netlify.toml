@@ -4,12 +4,3 @@
 
 [build.environment]
   NODE_VERSION = "22"
-
-# The hosted copy lives at croissantride.com. The old address (kept as a domain alias on
-# the Netlify project) sends riders there. The rule only matches that host, so a copy
-# hosted anywhere else is unaffected. www ↔ apex is handled by Netlify itself.
-[[redirects]]
-  from = "https://ride.arthurpfz.com/*"
-  to = "https://croissantride.com/:splat"
-  status = 301
-  force = true

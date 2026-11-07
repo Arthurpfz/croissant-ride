@@ -1,6 +1,6 @@
 // Rider actions: the one list every input triggers. Keys, HUD buttons and the Zwift Click today; another remote
 // (e.g. a phone, roadmap N23) only needs to call `press(id)`. What an action does is defined once, in main.ts.
-export type ActionId = 'pause' | 'harder' | 'easier' | 'erg' | 'skip' | 'world' | 'mute' | 'end' | 'keys';
+export type ActionId = 'pause' | 'harder' | 'easier' | 'erg' | 'skip' | 'world' | 'mute' | 'end' | 'keys' | 'float';
 
 export interface Action {
   label: string; // what it does, for the shortcuts popover
@@ -19,16 +19,20 @@ export const all = () => actions;
 export function bindActions(defs: Record<ActionId, Action>, isActive: () => boolean) {
   actions = defs;
   active = isActive;
-  const byKey = new Map<string, ActionId>();
   for (const [id, a] of Object.entries(defs) as [ActionId, Action][]) {
     for (const k of [...a.keys, ...(a.more ?? [])]) byKey.set(k.toLowerCase(), id);
     document.querySelectorAll<HTMLElement>(a.button).forEach((b) => (b.onclick = () => trigger(id)));
   }
-  addEventListener('keydown', (e) => {
-    if (!active() || e.metaKey || e.ctrlKey || e.altKey || (e.target as HTMLElement).tagName === 'INPUT') return;
-    const id = byKey.get(e.key.toLowerCase());
-    if (!id) return;
-    e.preventDefault();
-    trigger(id);
-  });
+  listenKeys(window);
 }
+
+const byKey = new Map<string, ActionId>();
+function onKey(e: KeyboardEvent) {
+  if (!active() || e.metaKey || e.ctrlKey || e.altKey || (e.target as HTMLElement).tagName === 'INPUT') return;
+  const id = byKey.get(e.key.toLowerCase());
+  if (!id) return;
+  e.preventDefault();
+  trigger(id);
+}
+// the same shortcuts in another window of this page (the floating mini window)
+export const listenKeys = (w: Window) => w.addEventListener('keydown', onKey);

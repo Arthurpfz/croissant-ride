@@ -60,6 +60,19 @@ button.icon svg { width: 20px; height: 20px; fill: none; stroke: currentColor; s
 .state.low { color: var(--low); } .state.ok { color: var(--ok); } .state.high { color: var(--high); }
 
 /* Bar: crust fill on a slate track. Thin = workout progress; .step = step time (8px). */
+/* Mini window: the floating ride card (Document Picture-in-Picture, see mini.ts). Body of its own small window:
+   big dot-matrix watts (red = off target) + target on the left; time left, heart rate, step progress and next on the right. */
+body.mini { height: 100vh; display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; column-gap: var(--space-8); padding: 0 var(--space-8); background: var(--charcoal); }
+.mini-watts { display: grid; row-gap: var(--space-3); padding-right: var(--space-8); border-right: var(--border) solid var(--line); }
+.mini-watts b { font-family: var(--font-dot); font-size: var(--fs-display); font-weight: var(--fw-dot); line-height: var(--lh-dot); }
+.mini-watts b.off, #m-target.off { color: var(--off); }
+#m-target { font-family: var(--font-mono); font-size: var(--fs-unit); color: var(--soft); white-space: nowrap; }
+.mini-side { display: grid; row-gap: var(--space-3); min-width: 0; }
+.mini-row { display: flex; justify-content: space-between; gap: var(--space-4); font-family: var(--font-mono); font-size: var(--fs-body); }
+#m-next { font-size: var(--fs-caption); color: var(--soft); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#m-next small { margin: 0; }
+#m-next.soon, #m-next.soon small { color: var(--accent); }
+#hud.floating #workout, #hud.floating #data { display: none; } /* the mini window shows them instead */
 .bar { height: 4px; border-radius: var(--radius-pill); background: var(--surface-raised); overflow: hidden; }
 .bar > div { height: 100%; width: 0; background: var(--accent); border-radius: inherit; }
 .bar.step { height: 8px; }
@@ -101,7 +114,7 @@ button.icon svg { width: 20px; height: 20px; fill: none; stroke: currentColor; s
 
 /* Overlay card: full-screen scrim + centred near-opaque card; .wide for the start screen and summary. Tile = section inside a card. */
 .overlay { position: fixed; inset: 0; display: grid; place-items: center; background: var(--scrim); padding: var(--space-8); overflow: auto; }
-.overlay[hidden], #hud[hidden], #recover[hidden], #workout[hidden], #no-bt[hidden], #keys[hidden], #btn-world[hidden] { display: none; }
+.overlay[hidden], #hud[hidden], #recover[hidden], #workout[hidden], #no-bt[hidden], #keys[hidden], #btn-world[hidden], #btn-float[hidden] { display: none; }
 .card { background: var(--surface-card); border: var(--border) solid var(--line); border-radius: var(--radius-card); padding: var(--space-14); width: min(460px, 100%); box-shadow: var(--shadow-card); }
 .card.wide { width: min(1200px, 100%); padding: var(--space-16); }
 .tile { background: var(--surface-tile); border: var(--border) solid var(--line); border-radius: var(--radius-panel); padding: var(--space-11) var(--space-12); }

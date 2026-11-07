@@ -41,6 +41,13 @@ export function drawProfile(cv: HTMLCanvasElement, w: Workout, progress?: number
   }
 }
 
+// live power against the target: the HUD's state chip and the mini window's red watts use the same rule
+export function powerState(target: number, into: number): 'low' | 'ok' | 'high' | '' {
+  if (into <= 5) return '';
+  const r = live.power3s / target;
+  return r < 0.9 ? 'low' : r > 1.1 ? 'high' : 'ok';
+}
+
 let shownWorkout: Workout | null = null;
 let shownStep = -2;
 export const refreshSteps = () => { shownStep = -2; };
@@ -86,9 +93,9 @@ export function update(w: Workout, wT: number, offset: number, target: number | 
   let s: 'low' | 'ok' | 'high' | '' = '', cue = '';
   if (cur && target !== null) {
     $('d-target').innerHTML = `Target <b>${Math.round(target)} W</b> · ${Math.round((target / settings.ftp) * 100)}% FTP · ${cad}`;
-    if (cur.into > 5) {
+    s = powerState(target, cur.into);
+    if (s) {
       const r = live.power3s / target;
-      s = r < 0.9 ? 'low' : r > 1.1 ? 'high' : 'ok';
       cue = r < 0.85 ? '▲ Pick it up' : r > 1.15 ? '▼ Settle in' : '';
     }
   } else $('d-target').innerHTML = cad;

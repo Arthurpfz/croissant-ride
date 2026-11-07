@@ -43,6 +43,7 @@
   --soft: var(--stone);
   --accent: var(--crust);
   --on-accent: var(--charcoal);
+  --off: #e5604f;       /* live watts off target in the floating mini window */
   --danger: #f2a070;    /* crust lifted for small text on HUD panels (AA over a white sky) */
 
   /* live-data states (the chip next to live power) */

@@ -11,6 +11,7 @@ import { rememberedDevices, type Sensor } from './ble/ble';
 import { click, connectClick, lastPress } from './ble/click';
 import * as units from './units';
 import * as hud from './hud';
+import * as mini from './mini';
 import * as rec from './recorder';
 import * as audio from './audio';
 import { summaryCharts } from './summary';
@@ -197,6 +198,7 @@ async function startRide(w: Workout) {
   if (!SIM && trainer.status !== 'connected' && !(powerMeter.status === 'connected' && measuresPower)) {
     if (!confirm('No trainer or power meter connected. Ride anyway?')) return;
   }
+  if (floatOn && !mini.isOpen()) openMini(); // first, while the start click still lets Chrome open a window
   audio.unlock();
   const r = routeById(w.route), s = skinFor(r);
   if (route?.data !== r || world.skin !== s) await world.show(r, s);
@@ -207,8 +209,35 @@ async function startRide(w: Workout) {
   $('hud').hidden = false;
   hud.refreshSteps();
   renderDots();
-  try { wakeLock = await navigator.wakeLock?.request('screen'); } catch {}
+  await keepAwake();
 }
+// Chrome drops the screen wake lock whenever the tab is hidden: take it again on coming back mid-ride
+async function keepAwake() { try { wakeLock = await navigator.wakeLock?.request('screen'); } catch {} }
+document.addEventListener('visibilitychange', () => { if (!document.hidden && (ride.mode === 'ride' || ride.mode === 'paused')) keepAwake(); });
+
+// Floating mini window ⇄ in-app panels (mini.ts). The choice is remembered: in Floating mode the window opens on the
+// ride-start click; its ✕ switches back to In-app, and it closes when the ride ends.
+let floatOn = (() => { try { return localStorage.getItem('hud-float') === '1'; } catch { return false; } })();
+function setFloat(on: boolean) {
+  floatOn = on;
+  try { localStorage.setItem('hud-float', on ? '1' : '0'); } catch {}
+}
+async function openMini() {
+  try {
+    await mini.open((byUser) => { $('hud').classList.remove('floating'); if (byUser) setFloat(false); });
+    $('hud').classList.add('floating');
+    showMini();
+  } catch { /* no click to open it on (e.g. the demo's own start): stay in-app */ }
+}
+function toggleFloat() {
+  setFloat(!mini.isOpen());
+  if (floatOn) openMini(); else mini.close();
+}
+function showMini() {
+  const { cur, target } = ride.target();
+  mini.update({ cur, target, next: cur ? ride.workout.steps[cur.i + 1] : undefined, offset: ride.offset, paused: ride.mode === 'paused', lost: trainer.status === 'lost' });
+}
+$('btn-float').hidden = !mini.supported;
 
 function togglePause() {
   ride.togglePause();
@@ -262,6 +291,7 @@ bindActions({
   mute: { label: 'Mute audio cues', keys: ['m'], button: '#btn-mute', run: toggleMute },
   end: { label: 'End ride', keys: [], button: '#btn-end', run: askEnd },
   keys: { label: 'Show these shortcuts', keys: ['?'], button: '#btn-keys', run: () => toggleKeys() },
+  float: { label: 'Floating mini window ⇄ in-app panels', keys: ['f'], button: '#btn-float', run: () => { if (mini.supported) toggleFloat(); } },
 }, () => ride.mode === 'ride' || ride.mode === 'paused');
 $('btn-resume').onclick = () => { $('confirm').hidden = true; togglePause(); };
 // back to the start screen; a demo ends there, back in normal mode
@@ -283,8 +313,10 @@ addEventListener('beforeunload', (e) => {
 
 // simulated sensors for testing without hardware. Console: `sim.mute.add('hr')` silences a metric,
 // `sim.trainer.status = 'lost'` fakes a disconnect, `sim.powerMeter.status = 'connected'` adds a (miscalibrated) PM,
-// `sim.world.renderer.info.memory` / `sim.rec.recording()` for checking skin switches, `sim.ride` = the ride engine.
-const sim = { mute: new Set<string>(), trainer, hrStrap, powerMeter, world, rec, ride };
+// `sim.world.renderer.info.memory` / `sim.rec.recording()` for checking skin switches, `sim.ride` = the ride engine,
+// `sim.clock.maxGap` = longest gap between ride ticks in ms (set it to 0, hide the tab, read it back).
+const clock = { maxGap: 0 };
+const sim = { mute: new Set<string>(), trainer, hrStrap, powerMeter, world, rec, ride, clock };
 const simTrainer = SIM ? useSimulator(sim.mute) : null;
 if (SIM) {
   Object.assign(window, { live, sim });
@@ -305,13 +337,14 @@ function simulate(dt: number) {
   }
 }
 
-// Ride logic runs on a timer, not the render loop: Chrome pauses rAF for hidden windows,
-// and background timers get throttled, so long gaps are integrated in small sub-steps.
+// Ride logic runs on a timer, not the render loop: Chrome pauses rAF for hidden windows. The timer lives in a worker,
+// since a hidden tab's own timers slow to once a minute after 5 min; any gap left is integrated in small sub-steps.
 let lastTick = performance.now();
 const toWall = (perf: number) => perf - performance.now() + Date.now();
 const recent: [number, number][] = []; // [power, dt] of the last 3 s, for the HUD
 function tick() {
   const now = performance.now();
+  clock.maxGap = Math.max(clock.maxGap, now - lastTick);
   let left = Math.min(120, (now - lastTick) / 1000);
   lastTick = now;
   while (left > 0) {
@@ -319,6 +352,7 @@ function tick() {
     left -= dt;
     simStep(dt, toWall(now - left * 1000)); // wall-clock time of this sub-step
   }
+  if (mini.isOpen()) showMini(); // from the tick, not the render loop, so it keeps updating while this tab is hidden
 }
 // sensors → live power, then one engine step
 function simStep(dt: number, wall: number) {
@@ -333,7 +367,8 @@ function simStep(dt: number, wall: number) {
   live.power3s = recent.reduce((a, [p, d]) => a + p * d, 0) / span;
   ride.step(dt, wall);
 }
-setInterval(tick, 250);
+try { new Worker(new URL('./clock.worker.ts', import.meta.url), { type: 'module' }).onmessage = tick; }
+catch { setInterval(tick, 250); }
 
 let last = performance.now();
 let menuDistance = 0;
@@ -376,6 +411,7 @@ requestAnimationFrame(frame);
 // --- finish: summary + hand the .FIT to the rider (no uploads from the app) -------------------
 function finish() {
   ride.finish();
+  mini.close();
   wakeLock?.release().catch(() => {});
   rec.persist();
   const r = rec.recording();

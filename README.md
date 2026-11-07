@@ -13,6 +13,7 @@ One rider, no accounts, no backend: everything stays in your browser.
 - **ERG workouts:** six built-in sessions in % of FTP, plus Free Ride. Import your own as Zwift-format `.zwo` files (what TrainingPeaks, Intervals.icu and others export), including coach notes.
 - **Live data:** power (3 s average), heart rate, cadence, virtual speed and distance; target, time left in the step and the whole workout as a bar chart.
 - **Rider controls:** target ±10 W, ride a step by feel (ERG off), skip, pause. Keyboard shortcuts; a Bluetooth presentation clicker or the original Zwift Click works as a handlebar remote.
+- **Floating mini window:** watch something in another tab while you ride: a small always-on-top card keeps the watts, heart rate, time left and next step in view (Chrome/Edge; `F` or the ⧉ button).
 - **Cues:** a 3-2-1 countdown, a beep and a spoken summary before each step change. ERG is released automatically when cadence drops too low (and comes back when you spin up).
 - **Worlds:** three switchable looks (night sketch, space, valley), generated in code.
 - **Recording:** 1 s samples, saved every 5 s so a crash or closed tab doesn't lose the ride; FIT export with laps per step and heart-rate variability (RR intervals).

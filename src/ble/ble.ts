@@ -7,6 +7,16 @@ export const hex =(v: DataView) => [...new Uint8Array(v.buffer)].map((b) => b.to
 // Zwift controllers' own service: the 128-bit one, and the 16-bit one newer Ride firmware moved to
 export const ZWIFT_SERVICES: BluetoothServiceUUID[] = ['00000001-19ca-4651-86e5-fa29dcdd09d1', 0xfc82];
 
+// Full 128-bit UUIDs everywhere: Bluefy (iOS) doesn't take 16-bit numbers or names like 'heart_rate'
+const NAMES: Record<string, number> = {
+  heart_rate: 0x180d, heart_rate_measurement: 0x2a37, cycling_power: 0x1818, cycling_power_measurement: 0x2a63,
+  cycling_speed_and_cadence: 0x1816, csc_measurement: 0x2a5b,
+};
+export const uuid = (u: BluetoothServiceUUID | BluetoothCharacteristicUUID): string => {
+  const n = typeof u === 'number' ? u : NAMES[u];
+  return n === undefined ? String(u).toLowerCase() : `0000${n.toString(16).padStart(4, '0')}-0000-1000-8000-00805f9b34fb`;
+};
+
 export type Status = 'idle' | 'connecting' | 'connected' | 'lost';
 
 export interface Sensor {
@@ -23,8 +33,8 @@ export async function connectSensor(
 ): Promise<BluetoothDevice> {
   const set = (s: Status) => { sensor.status = s; sensor.onStatus?.(s); };
   device ??= await navigator.bluetooth.requestDevice({
-    filters: [service].flat().map((s) => (typeof s === 'object' ? s : { services: [s] })),
-    optionalServices: [0x1826, 'cycling_power', 'cycling_speed_and_cadence', 'heart_rate', ...ZWIFT_SERVICES],
+    filters: [service].flat().map((s) => (typeof s === 'object' ? s : { services: [uuid(s)] })),
+    optionalServices: [0x1826, 'cycling_power', 'cycling_speed_and_cadence', 'heart_rate', ...ZWIFT_SERVICES].map(uuid),
   });
   const dev = device;
   sensor.name = dev.name ?? 'device';
@@ -60,7 +70,7 @@ export async function subscribe(
   char: BluetoothCharacteristicUUID,
   onData: (v: DataView) => void,
 ) {
-  const c = await (await server.getPrimaryService(service)).getCharacteristic(char);
+  const c = await (await server.getPrimaryService(uuid(service))).getCharacteristic(uuid(char));
   let n = 0;
   c.addEventListener('characteristicvaluechanged', () => {
     if (DEBUG && n++ % 20 < 2) console.info('ble', String(char), hex(c.value!));

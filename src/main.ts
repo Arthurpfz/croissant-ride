@@ -60,7 +60,7 @@ function sensorButton(id: string, sensor: Sensor, connect: (d?: BluetoothDevice)
     label.textContent = s === 'connected' ? sensor.name : s === 'connecting' ? 'connecting…' : s === 'lost' ? 'reconnecting…' : 'Tap to pair';
     renderDots();
   };
-  btn.onclick = () => connect().catch((e) => { if (e.name !== 'NotFoundError') alert(e.message); });
+  btn.onclick = () => connect().catch((e) => { if (e?.name !== 'NotFoundError') alert(e?.message ?? String(e)); }); // Bluefy rejects with plain strings
 }
 if (!SIM && !navigator.bluetooth) {
   const ios = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);

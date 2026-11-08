@@ -1,7 +1,7 @@
 // The trainer plug: one shape every trainer driver fills in, so the ride loop never knows which protocol it drives.
 // Add a trainer = write a driver (see ftms.ts) and list it in `drivers`. Drivers only see real changes (deduplicated
 // here), report readings through `io`, and never touch app state directly.
-import { connectSensor, DEBUG, type Sensor } from '../ble/ble';
+import { connectSensor, uuid, DEBUG, type Sensor } from '../ble/ble';
 import { hrStrap } from '../ble/hr';
 import { powerMeter } from '../ble/power';
 import { reading } from '../state';
@@ -43,7 +43,7 @@ const io: TrainerIO = {
 export const connectTrainer = (device?: BluetoothDevice) =>
   connectSensor(trainer, drivers.map((d) => d.service), async (server) => {
     const have = new Set((await server.getPrimaryServices()).map((s) => s.uuid));
-    const d = drivers.find((d) => have.has(BluetoothUUID.getService(d.service)));
+    const d = drivers.find((d) => have.has(uuid(d.service)));
     if (!d) throw new Error(`${trainer.name} speaks no supported trainer protocol`);
     lastErg = -1; lastGrade = NaN; // resend the current target after a reconnect
     await d.setup(server, io, !OBSERVE);

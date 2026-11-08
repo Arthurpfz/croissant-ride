@@ -1,6 +1,6 @@
 // FTMS (Fitness Machine Service, 0x1826), the standard most current smart trainers speak: reads Indoor Bike Data,
 // ERG = Set Target Power (0x05), gradient = Indoor Bike Simulation (0x11).
-import { subscribe, DEBUG, hex } from '../ble/ble';
+import { subscribe, uuid, DEBUG, hex } from '../ble/ble';
 import { crankCadence, cpsCrank, cscCrank } from '../ble/power';
 import type { TrainerDriver, TrainerIO } from './trainer';
 
@@ -39,8 +39,8 @@ export const ftms: TrainerDriver = {
   name: 'FTMS',
   service: FTMS,
   async setup(server, io, takeControl) {
-    const svc = await server.getPrimaryService(FTMS);
-    control = takeControl ? await svc.getCharacteristic(CONTROL) : undefined;
+    const svc = await server.getPrimaryService(uuid(FTMS));
+    control = takeControl ? await svc.getCharacteristic(uuid(CONTROL)) : undefined;
     await control?.startNotifications(); // indications required before writes on most trainers
     queue = Promise.resolve();
     write([0x00]); // request control

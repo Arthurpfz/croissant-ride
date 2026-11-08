@@ -1,7 +1,7 @@
 // Zwift Click (the original one-pod remote, on firmware without encryption) as a handlebar remote: + / − = target ±10 W.
 // Protocol facts from public notes (makinolo.com); our own code. Controllers that only talk over an encrypted link
 // (Click v2, old firmware) are refused on purpose: getting around their lock breaks Zwift's terms (vault: roadmap N23).
-import { connectSensor, subscribe, DEBUG, hex, ZWIFT_SERVICES, type Sensor } from './ble';
+import { connectSensor, subscribe, uuid, DEBUG, hex, ZWIFT_SERVICES, type Sensor } from './ble';
 import { press, type ActionId } from '../actions';
 
 export const click: Sensor = { name: '', status: 'idle' };
@@ -28,7 +28,7 @@ function fields(v: DataView, o: number) {
 export const connectClick = (device?: BluetoothDevice) =>
   connectSensor(click, [{ manufacturerData: [{ companyIdentifier: ZWIFT_ID }] }, { namePrefix: 'Zwift Click' }], async (server) => {
     let svc: BluetoothRemoteGATTService | undefined;
-    for (const u of ZWIFT_SERVICES) svc ??= await server.getPrimaryService(u).catch(() => undefined);
+    for (const u of ZWIFT_SERVICES) svc ??= await server.getPrimaryService(uuid(u)).catch(() => undefined);
     if (!svc) throw new Error('Not a Zwift controller');
     // by property, so both service layouts work: notify = button messages, indicate = replies, write = commands
     const chars = await svc.getCharacteristics();

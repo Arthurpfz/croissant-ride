@@ -46,11 +46,11 @@ Then open `http://localhost:5173/?sim=1`. The simulator fakes a trainer, heart r
 
 ## Host your own
 
-It's a static site: run `npm run build` and serve `dist/` from any static host (Netlify, Vercel, GitHub Pages, nginx). Web Bluetooth needs HTTPS (or `localhost`). There is nothing else to set up: no server, no database, no keys.
+It's a static site: run `npm run build` and serve `dist/` from any static host (Netlify, Vercel, GitHub Pages, nginx). Web Bluetooth needs HTTPS (or `localhost`). There is nothing else to set up: no server, no database, no keys. Optional settings (your address, legal pages, analytics) are in [.env.example](.env.example).
 
 ## Privacy
 
-No accounts, no analytics, no uploads. Settings (FTP, weight) and the ride in progress live in your browser's local storage. Rides leave your computer only when you post the .FIT file yourself.
+No accounts, no cookies, no uploads. Settings (FTP, weight) and the ride in progress live in your browser's local storage. Rides leave your computer only when you post the .FIT file yourself. The app has no analytics unless its host turns them on: the hosted copy at croissantride.com counts visits with self-hosted, cookieless Umami (see its privacy page).
 
 ## Help wanted
 

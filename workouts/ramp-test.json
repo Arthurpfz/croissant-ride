@@ -1,0 +1,10 @@
+{
+  "name": "Ramp FTP test",
+  "who": "Harder every minute until you can't hold it · about 25 min",
+  "test": "ramp",
+  "steps": [
+    { "min": 5, "pct": 46, "label": "Warm-up" },
+    { "ramp": { "from": 52, "by": 6, "count": 30 } },
+    { "min": 5, "pct": 40, "label": "Cool-down" }
+  ]
+}

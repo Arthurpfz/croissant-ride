@@ -114,7 +114,7 @@ body.mini { height: 100vh; display: grid; grid-template-columns: auto minmax(0, 
 
 /* Overlay card: full-screen scrim + centred near-opaque card; .wide for the start screen and summary. Tile = section inside a card. */
 .overlay { position: fixed; inset: 0; display: grid; place-items: center; background: var(--scrim); padding: var(--space-8); overflow: auto; }
-.overlay[hidden], #hud[hidden], #recover[hidden], #workout[hidden], #no-bt[hidden], #keys[hidden], #btn-world[hidden], #btn-float[hidden] { display: none; }
+.overlay[hidden], #hud[hidden], #recover[hidden], #sum-ftp[hidden],#workout[hidden], #no-bt[hidden], #keys[hidden], #btn-world[hidden], #btn-float[hidden] { display: none; }
 .card { background: var(--surface-card); border: var(--border) solid var(--line); border-radius: var(--radius-card); padding: var(--space-14); width: min(460px, 100%); box-shadow: var(--shadow-card); }
 .card.wide { width: min(1200px, 100%); padding: var(--space-16); }
 .tile { background: var(--surface-tile); border: var(--border) solid var(--line); border-radius: var(--radius-panel); padding: var(--space-11) var(--space-12); }
@@ -133,9 +133,11 @@ body.mini { height: 100vh; display: grid; grid-template-columns: auto minmax(0, 
 .pill { height: 44px; padding: 0 var(--space-7); display: flex; align-items: center; font-family: var(--font-mono); font-size: var(--fs-unit); color: var(--soft); background: var(--surface-tile); border: var(--border) solid var(--line); border-radius: var(--radius-md); }
 .sensors { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: var(--space-8); }
 @media (min-width: 700px) { .sensors { grid-template-columns: repeat(2, minmax(0, 1fr)); } } /* 2 × 2 */
-#recover { background: var(--surface-callout); border: var(--border) solid var(--accent); padding: var(--space-5) var(--space-7); border-radius: var(--radius-ctl); margin-top: var(--space-8); display: flex; justify-content: space-between; align-items: center; gap: var(--space-5); flex-wrap: wrap; }
+#recover, #sum-ftp { background: var(--surface-callout); border: var(--border) solid var(--accent); padding: var(--space-5) var(--space-7); border-radius: var(--radius-ctl); margin-top: var(--space-8); display: flex; justify-content: space-between; align-items: center; gap: var(--space-5); flex-wrap: wrap; }
+#sum-ftp { grid-column: 1 / -1; margin-top: 0; } /* FTP test result, across the top of the summary */
+#sum-ftp small { flex-basis: 100%; color: var(--muted); }
 #no-bt { margin: var(--space-8) 0 0; padding: var(--space-5) var(--space-7); background: var(--surface-callout); border: var(--border) solid var(--accent); border-radius: var(--radius-ctl); }
-#recover button { margin-left: auto; } #recover button + button { margin-left: 0; }
+#recover button, #sum-ftp button { margin-left: auto; } #recover button + button { margin-left: 0; }
 .list-head { display: flex; justify-content: space-between; align-items: baseline; gap: var(--space-4) var(--space-8); flex-wrap: wrap; margin: var(--space-14) 0 var(--space-8); }
 .legend { display: flex; gap: var(--space-8); flex-wrap: wrap; font-family: var(--font-mono); font-size: var(--fs-label); color: var(--muted); }
 .legend span { display: flex; align-items: center; gap: var(--space-3); }

@@ -1,7 +1,7 @@
 // Ride engine: workout clock, targets, ERG/SIM switching, spiral protection, pause. No DOM and no Bluetooth:
 // the screen (main.ts) passes in the trainer, recorder, route and cue outputs, so the engine also runs headless.
 import { live } from './state';
-import { at, watts, type Step, type Workout } from './workouts';
+import { at, watts, totalDuration, type Step, type Workout } from './workouts';
 import { step as physics } from './physics';
 
 export type Mode = 'start' | 'ride' | 'paused' | 'done';
@@ -18,7 +18,7 @@ export interface RideIO {
 }
 
 export function createRide(io: RideIO) {
-  let gradeTimer = 0, lowCad = 0;
+  let gradeTimer = 0, lowCad = 0, under = 0;
   let stepIdx = -1, doneAt = -1;
   let cued = -1; // last step whose start was announced
 
@@ -33,7 +33,7 @@ export function createRide(io: RideIO) {
 
     start(w: Workout) {
       Object.assign(ride, { workout: w, wT: 0, rolling: false, feel: false, mode: 'ride' });
-      stepIdx = -1; doneAt = -1; cued = -1;
+      stepIdx = -1; doneAt = -1; cued = -1; under = 0;
       Object.assign(live, { distance: 0, elapsed: 0, ascent: 0, kj: 0, speed: 0, elevation: io.route.elevAt(0) });
     },
 
@@ -78,6 +78,15 @@ export function createRide(io: RideIO) {
         live.elevation = e;
         live.kj += (live.power * dt) / 1000;
         io.rec.add(dt, wall, t);
+      }
+      // FTP test: under half the target for 10 s on the ramp = the rider is done; go straight to the cool-down
+      const last = ride.workout.steps.length - 1;
+      const onRamp = !!ride.workout.test && !!cur && cur.i > 0 && cur.i < last && ride.rolling && !io.trainerLost();
+      under = onRamp && t !== null && live.power < t / 2 ? under + dt : 0;
+      if (under > 10) {
+        under = 0;
+        ride.wT = totalDuration(ride.workout) - ride.workout.steps[last].dur;
+        io.banner('Test done — spin easy', 4000);
       }
       // audio: beep + announce the next step 3 s ahead; steps reached without that (start, skip) are announced on arrival
       if (cur && cur.left <= 3 && cued <= cur.i) {

@@ -4,14 +4,19 @@ import { settings } from './state';
 // Workout library (% FTP). `to` = ramp end, `free` = no ERG (sprints / free ride), `rep` = "2 of 3" label,
 // `notes` = coach messages [s into the step, text] (from imported .zwo textevents).
 export interface Step { dur: number; from: number; to?: number; free?: boolean; label?: string; rep?: [number, number]; notes?: [number, string][] }
-export interface Workout { id: string; name: string; who: string; steps: Step[]; route?: string } // route: worlds/routes id (default: the flat loop)
+// route: worlds/routes id (default: the flat loop). test: 'ramp' = an FTP test: first step warm-up, last step cool-down,
+// the ride engine ends the ramp between them when the rider can't hold it, and the summary proposes a new FTP.
+export interface Workout { id: string; name: string; who: string; steps: Step[]; route?: string; test?: 'ramp' }
 
 // Built-in sessions: one JSON file each in `workouts/`, in % FTP. A step is { min | sec, pct, free?, label? },
-// { warmup: min } (50 → 75 %), { cooldown: min } (60 → 40 %) or { repeat: n, steps, lastRecovery? }: the repeat's
-// first step is the work and carries "i of n"; a `pct` list gives each rep its own target.
-interface FileStep { min?: number; sec?: number; pct?: number | number[]; free?: boolean; label?: string; warmup?: number; cooldown?: number; repeat?: number; steps?: FileStep[]; lastRecovery?: boolean }
+// { warmup: min } (50 → 75 %), { cooldown: min } (60 → 40 %), { ramp: { from, by, count } } (1-min steps, each `by` %
+// higher) or { repeat: n, steps, lastRecovery? }: the repeat's first step is the work and carries "i of n"; a `pct`
+// list gives each rep its own target.
+interface FileStep { min?: number; sec?: number; pct?: number | number[]; free?: boolean; label?: string; warmup?: number; cooldown?: number; ramp?: { from: number; by: number; count: number }; repeat?: number; steps?: FileStep[]; lastRecovery?: boolean }
 
 function expand(f: FileStep, rep = 0): Step[] {
+  const r = f.ramp;
+  if (r) return Array.from({ length: r.count }, (_, i): Step => ({ dur: 60, from: r.from + i * r.by }));
   if (f.warmup) return [{ dur: f.warmup * 60, from: 50, to: 75, label: 'Warm-up' }];
   if (f.cooldown) return [{ dur: f.cooldown * 60, from: 60, to: 40, label: 'Cool-down' }];
   if (f.repeat) {
@@ -25,9 +30,9 @@ function expand(f: FileStep, rep = 0): Step[] {
   return [{ dur: (f.min ?? 0) * 60 + (f.sec ?? 0), from: Array.isArray(f.pct) ? f.pct[rep] : f.pct!, free: f.free, label: f.label }];
 }
 
-const files = import.meta.glob<{ name: string; who: string; steps: FileStep[] }>('../workouts/*.json', { eager: true, import: 'default' });
+const files = import.meta.glob<{ name: string; who: string; steps: FileStep[]; test?: 'ramp' }>('../workouts/*.json', { eager: true, import: 'default' });
 export const workouts: Workout[] = [
-  ...Object.entries(files).map(([p, w]) => ({ id: p.slice(p.lastIndexOf('/') + 1, -5), name: w.name, who: w.who, steps: w.steps.flatMap((st) => expand(st)) })),
+  ...Object.entries(files).map(([p, w]) => ({ id: p.slice(p.lastIndexOf('/') + 1, -5), name: w.name, who: w.who, steps: w.steps.flatMap((st) => expand(st)), test: w.test })),
   { id: 'free', name: 'Free Ride', who: 'Just ride the loop', steps: [] },
   { id: 'galibier', name: 'Col du Galibier', who: 'Valloire → 2,642 m · 18 km at 7 % · map data IGN', steps: [], route: 'galibier' },
 ];

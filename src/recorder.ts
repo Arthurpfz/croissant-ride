@@ -55,6 +55,13 @@ export const load = (r: Ride) => { ride = r; };
 // --- stats -----------------------------------------------------------------
 const avg = (xs: number[]) => (xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : 0);
 
+// highest 60 s mean power (0 for a ride under a minute): what an FTP ramp test is scored on
+export function bestMinute(s = ride.samples) {
+  let sum = 0, best = 0;
+  s.forEach((x, i) => { sum += x.p - (i >= 60 ? s[i - 60].p : 0); if (i >= 59) best = Math.max(best, sum / 60); });
+  return best;
+}
+
 export function stats(s = ride.samples) {
   const p = s.map((x) => x.p), hr = s.map((x) => x.hr).filter(Boolean), cad = s.map((x) => x.c).filter(Boolean);
   // NP: 30 s rolling mean, ^4, mean, ^¼

@@ -429,6 +429,19 @@ function finish() {
   $('sum-grid').innerHTML = cells.map(([v, u, l]) => `<div><small>${l}</small><b>${v}<small>${u}</small></b></div>`).join('');
   summaryCharts(r.samples, settings.ftp);
   const fit = rec.toFit(r);
+  // FTP test ridden past its warm-up: FTP = 75 % of the best minute (72–77 % for most riders), saved on one click
+  const best = ride.workout.test && r.laps.length > 1 ? rec.bestMinute(r.samples) : 0;
+  if (best) {
+    const ftp = Math.round(best * 0.75), was = settings.ftp;
+    const box = $('sum-ftp'), save = document.createElement('button');
+    box.hidden = false;
+    box.innerHTML = `<span>Best minute <b>${Math.round(best)} W</b> → FTP <b>${ftp} W</b> (was ${was} W)</span>`
+      + `<small>75 % of your best minute. For most riders FTP sits between ${Math.round(best * 0.72)} and ${Math.round(best * 0.77)} W.`
+      + `${Math.abs(ftp / was - 1) > 0.25 ? ' The old setting was far off, so the steps were the wrong size: test again another day for a closer number.' : ''}</small>`;
+    save.className = 'primary'; save.textContent = `Set FTP to ${ftp} W`;
+    save.onclick = () => { settings.ftp = ftp; settings.save(); save.disabled = true; save.textContent = 'FTP saved ✓'; };
+    box.querySelector('span')!.after(save);
+  }
   const download = () => {
     const a = document.createElement('a');
     a.href = URL.createObjectURL(new Blob([fit as BlobPart], { type: 'application/octet-stream' }));

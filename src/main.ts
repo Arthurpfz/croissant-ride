@@ -73,16 +73,20 @@ if (!SIM && !navigator.bluetooth) {
 $('impressum').hidden = !import.meta.env.VITE_IMPRESSUM_URL;
 $('privacy').hidden = !import.meta.env.VITE_PRIVACY_URL;
 // optional tips (.env.example): a Support link in the foot and a line on the ride summary; unset = nothing shown
-const { VITE_TIP_URL: tipUrl, VITE_TIP_WALLET: wallet } = import.meta.env;
+const tipUrl: string = import.meta.env.VITE_TIP_URL;
+const wallets = (import.meta.env.VITE_TIP_WALLETS as string).split(',').map((w) => w.trim().split(':')).filter(([n, a]) => n && a);
 $('tip').hidden = !tipUrl;
-$('sum-tip').hidden = !tipUrl && !wallet;
+$('sum-tip').hidden = !tipUrl && !wallets.length;
 $('tip-link').hidden = !tipUrl;
-$('tip-wallet').hidden = !wallet;
+$('tip-wallet').hidden = !wallets.length;
 ($('tip-wallet').firstElementChild as HTMLElement).hidden = !tipUrl;
-$('btn-wallet').onclick = () => {
-  const b = $('btn-wallet'), show = () => { b.textContent = wallet; getSelection()?.selectAllChildren(b); }; // no clipboard: show it, selected
-  navigator.clipboard ? navigator.clipboard.writeText(wallet).then(() => { b.textContent = 'address copied ✓'; }, show) : show();
-};
+$('wallets').append(...wallets.flatMap(([net, addr], i) => {
+  const b = document.createElement('button');
+  b.className = 'link'; b.textContent = `copy ${net} address`;
+  const show = () => { b.textContent = addr; getSelection()?.selectAllChildren(b); }; // no clipboard: show it, selected
+  b.onclick = () => navigator.clipboard ? navigator.clipboard.writeText(addr).then(() => { b.textContent = `${net} address copied ✓`; }, show) : show();
+  return i ? [' · ', b] : [b];
+}));
 sensorButton('c-trainer', trainer, connectTrainer);
 sensorButton('c-hr', hrStrap, connectHr);
 sensorButton('c-pm', powerMeter, connectPowerMeter);

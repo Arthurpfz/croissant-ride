@@ -63,6 +63,10 @@ It's a static site: run `npm run build` and serve `dist/` from any static host (
 
 No accounts, no cookies, no uploads. Settings (FTP, weight) and the ride in progress live in your browser's local storage. Rides leave your computer only when you post the .FIT file yourself. The app has no analytics unless its host turns them on: the hosted copy at croissantride.com counts visits with self-hosted, cookieless Umami (see its privacy page).
 
+## Support
+
+Croissant Ride is free and stays free. If it saves you a subscription, you can [buy me a croissant on Ko-fi](https://ko-fi.com/arthurpfalzgraf). Reports from your trainer help just as much.
+
 ## Help wanted
 
 - **More trainers:** Tacx FE-C over Bluetooth, Wahoo's older trainer protocol, trainers with only a resistance mode. A trainer is one driver file (see [CONTRIBUTING.md](CONTRIBUTING.md)).

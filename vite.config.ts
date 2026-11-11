@@ -2,7 +2,7 @@ import { readFileSync, writeFileSync } from 'node:fs';
 import { defineConfig, loadEnv, type Plugin } from 'vite';
 
 // Optional settings for a hosted copy (.env.example): unset means empty, so index.html never shows a literal %VITE_…%.
-for (const k of ['VITE_SITE_URL', 'VITE_IMPRESSUM_URL', 'VITE_PRIVACY_URL', 'VITE_TIP_URL', 'VITE_TIP_WALLET', 'VITE_TIP_WALLET_NETWORK']) process.env[k] ??= '';
+for (const k of ['VITE_SITE_URL', 'VITE_IMPRESSUM_URL', 'VITE_PRIVACY_URL', 'VITE_TIP_URL', 'VITE_TIP_WALLETS']) process.env[k] ??= '';
 
 // Optional Umami analytics: adds the script tag (counting only on the copy's own host, skipping Do Not Track)
 // and allows its server in the CSP of the built _headers. Off unless both settings are set.

@@ -1,11 +1,13 @@
 import * as THREE from 'three';
 import type { Route } from '../route';
+import { wooded } from '../packs';
 import { fbm } from '../noise';
 import { lerp, type Ground, type Rand } from '../kit';
 
-// cone pines in noise patches on the ground, kept off the road and out of the water and high rock: in a ring round
-// the origin (a loop's valley), or up to `along` m either side of the road; `maxSlope` keeps them off cliffs
-export default function pines(p: { count: number; from: number; patches: number; maxHeight: number; trunk: string; hue: [number, number]; along?: number; maxSlope?: number }, route: Route, ground: Ground, rand: Rand) {
+// cone pines on the ground, kept off the road and out of the water and high rock: in a ring round the origin (a
+// loop's valley), or up to `along` m either side of the road; `maxSlope` keeps them off cliffs. They stand in noise
+// patches, or with `forest` where the route's scenery has forest
+export default function pines(p: { count: number; from: number; patches: number; maxHeight: number; trunk: string; hue: [number, number]; light?: [number, number]; along?: number; maxSlope?: number; forest?: boolean }, route: Route, ground: Ground, rand: Rand) {
   const group = new THREE.Group();
   if (!ground) return group;
   const COUNT = p.count;
@@ -15,11 +17,11 @@ export default function pines(p: { count: number; from: number; patches: number;
   const m = new THREE.Matrix4(), q = new THREE.Quaternion(), s = new THREE.Vector3(), v = new THREE.Vector3();
   const col = new THREE.Color();
   let n = 0;
-  for (let tries = 0; n < COUNT && tries < COUNT * 20; tries++) {
+  for (let tries = 0; n < COUNT && tries < COUNT * (p.forest ? 80 : 20); tries++) {
     const o = p.along ? route.samples[Math.floor(rand() * route.samples.length)] : { x: 0, z: 0 };
     const a = rand() * Math.PI * 2, r = p.along ? p.from + rand() * p.along : 300 + Math.sqrt(rand()) * 3600;
     const x = o.x + Math.cos(a) * r, z = o.z + Math.sin(a) * r;
-    if (fbm(x / 300, z / 300) < p.patches) continue; // forest patches
+    if (p.forest ? !wooded(route.data, x, z) : fbm(x / 300, z / 300) < p.patches) continue; // forest patches
     if (route.nearRoad(x, z).dist < p.from) continue;
     const h = ground(x, z);
     if (h < -1 || h > p.maxHeight) continue; // water at -3
@@ -30,7 +32,7 @@ export default function pines(p: { count: number; from: number; patches: number;
     trunk.setMatrixAt(n, m);
     m.compose(v.set(x, h + 2.5 * s.y + 4 * s.y, z), q, s);
     crown.setMatrixAt(n, m);
-    crown.setColorAt(n, col.setHSL(lerp(p.hue[0], p.hue[1], rand()), 0.45, 0.18 + rand() * 0.1));
+    crown.setColorAt(n, col.setHSL(lerp(p.hue[0], p.hue[1], rand()), 0.45, lerp(...(p.light ?? [0.18, 0.28]), rand())));
     n++;
   }
   crown.count = trunk.count = n;

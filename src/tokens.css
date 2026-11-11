@@ -63,6 +63,7 @@
   /* canvas overlays (workout graph, minimap) */
   --graph-ahead: rgba(0, 0, 0, .6); /* erased from steps still to come, so they show at 40% */
   --graph-marker: var(--bone);
+  --map-shade: rgb(20 21 24 / 0.45);  /* over the minimap's aerial photo, so the route reads */
   --map-route: var(--zone-1);
   --map-done: var(--bone);          /* the part of this lap already ridden */
   --map-rider: var(--crust);

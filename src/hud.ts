@@ -2,6 +2,7 @@
 import { live, settings } from './state';
 import { at, totalDuration, zoneColor, watts, type Workout, type Step } from './workouts';
 import { route, type Route } from './world/route';
+import { mapPhotoOf } from './world/packs';
 import { token } from './tokens';
 import { speed, dist, height } from './units';
 
@@ -116,20 +117,29 @@ export function banner(text: string, ms = 2500) {
   setTimeout(() => b.classList.remove('show'), ms);
 }
 
-// minimap of the active route (bounds cached per route)
+// minimap of the active route, centred, north up (bounds cached per route); over the route's aerial photo if a skin loaded one
 let boxFor: Route | undefined, minX = 0, minZ = 0, span = 1;
 export function drawMinimap(cv: HTMLCanvasElement) {
   const { samples } = route;
   if (boxFor !== route) {
     const xs = samples.map((s) => s.x), zs = samples.map((s) => s.z);
-    minX = Math.min(...xs); minZ = Math.min(...zs);
-    span = Math.max(Math.max(...xs) - minX, Math.max(...zs) - minZ);
+    span = Math.max(Math.max(...xs) - Math.min(...xs), Math.max(...zs) - Math.min(...zs));
+    minX = (Math.min(...xs) + Math.max(...xs) - span) / 2; minZ = (Math.min(...zs) + Math.max(...zs) - span) / 2;
     boxFor = route;
   }
   const g = cv.getContext('2d')!;
   const S = cv.width, pad = 18, k = (S - pad * 2) / span;
   const P = (x: number, z: number) => [pad + (x - minX) * k, pad + (z - minZ) * k];
   g.clearRect(0, 0, S, S);
+  const photo = mapPhotoOf(route.data);
+  if (photo?.image) {
+    const px = photo.image.width / ((photo.nx - 1) * photo.cell); // photo pixels per metre
+    g.save();
+    g.beginPath(); g.roundRect(0, 0, S, S, parseFloat(token('radius-panel')) * (S / cv.clientWidth)); g.clip();
+    g.drawImage(photo.image, (minX - pad / k - photo.x0) * px, (minZ - pad / k - photo.z0) * px, (S / k) * px, (S / k) * px, 0, 0, S, S);
+    g.fillStyle = token('map-shade'); g.fillRect(0, 0, S, S);
+    g.restore();
+  }
   g.lineWidth = 5; g.lineJoin = 'round';
   g.beginPath();
   samples.forEach((s, i) => {

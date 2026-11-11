@@ -59,7 +59,7 @@ export function createWorld(canvas: HTMLCanvasElement) {
   // swap in a route + skin (after the route's terrain has loaded); the old skin's meshes, materials and textures are freed
   async function show(r: RouteData, s: SkinData) {
     target = s;
-    const grids = await terrainOf(r);
+    const grids = await terrainOf(r, s.ground.type === 'dem' && s.ground.photo);
     if (route?.data !== r) first = true; // camera jumps instead of gliding across the map
     setRoute(r);
     if (built) { scene.remove(built.group); built.dispose(); }

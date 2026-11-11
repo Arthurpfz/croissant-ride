@@ -35,10 +35,12 @@ Geist, Geist Mono and Doto fonts, in /fonts
 SIL Open Font License 1.1: see /fonts/OFL.txt for the copyright notices and the licence text.
 
 ----------------------------------------------------------------------
-Col du Galibier road and terrain, in worlds/routes/galibier
+Col du Galibier road, terrain, aerial photos and scenery, in worlds/routes/galibier
 ----------------------------------------------------------------------
 
-Contains IGN data: BD TOPO® (road) and RGE ALTI® (heights), downloaded 2026-11-02
-from the Géoplateforme (data.geopf.fr) and converted by scripts/galibier.mjs.
+Contains IGN data: BD TOPO® (road, buildings, forest, place names, tunnel), RGE ALTI®
+(heights) and ORTHO-EXPRESS 2024 and 2025 (aerial photos, merged and recoloured),
+downloaded 2026-11-02 and 2026-11-11 from the Géoplateforme (data.geopf.fr) and
+converted by scripts/galibier.mjs.
 Source: IGN (Institut national de l'information géographique et forestière).
 Licence Ouverte / Open Licence 2.0 (Etalab): https://www.etalab.gouv.fr/licence-ouverte-open-licence

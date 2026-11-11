@@ -23,8 +23,18 @@ One rider, no accounts, no backend: everything stays in your browser.
 ## What you need
 
 - **Browser:** Chrome or Edge on desktop or Android. They have Web Bluetooth; Safari, Firefox and every iPhone/iPad browser don't (on iOS, the Bluefy browser works).
-- **Smart trainer:** one that speaks Bluetooth FTMS (most trainers from the last few years). Tested on a Van Rysel D100.
+- **Smart trainer:** one that speaks Bluetooth FTMS (most trainers from the last few years). See the tested list below.
 - **Optional:** a Bluetooth heart-rate strap, and a cadence sensor or power meter for cadence if your trainer doesn't report it.
+
+## Tested hardware
+
+Ridden for real with the app. Yours isn't listed? [Tell us whether it works](https://github.com/Arthurpfz/croissant-ride/issues/new?template=trainer-report.yml), even in one line.
+
+| Device | Kind | Works | Notes |
+|---|---|---|---|
+| Van Rysel D100 (Decathlon) | Smart trainer, FTMS | ✅ ERG, power | No cadence from the trainer: pair a cadence sensor or power meter for it. The D100 is Bluetooth only, so bike computers can't run ERG sessions on it; this app can. |
+| SRAM Quarq power meter | Cadence | ✅ Cadence | Used for cadence only. |
+| Amazfit Helio Strap | Heart rate | ✅ Heart rate | |
 
 ## Run it locally
 

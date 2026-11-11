@@ -72,6 +72,17 @@ if (!SIM && !navigator.bluetooth) {
 }
 $('impressum').hidden = !import.meta.env.VITE_IMPRESSUM_URL;
 $('privacy').hidden = !import.meta.env.VITE_PRIVACY_URL;
+// optional tips (.env.example): a Support link in the foot and a line on the ride summary; unset = nothing shown
+const { VITE_TIP_URL: tipUrl, VITE_TIP_WALLET: wallet } = import.meta.env;
+$('tip').hidden = !tipUrl;
+$('sum-tip').hidden = !tipUrl && !wallet;
+$('tip-link').hidden = !tipUrl;
+$('tip-wallet').hidden = !wallet;
+($('tip-wallet').firstElementChild as HTMLElement).hidden = !tipUrl;
+$('btn-wallet').onclick = () => {
+  const b = $('btn-wallet'), show = () => { b.textContent = wallet; getSelection()?.selectAllChildren(b); }; // no clipboard: show it, selected
+  navigator.clipboard ? navigator.clipboard.writeText(wallet).then(() => { b.textContent = 'address copied ✓'; }, show) : show();
+};
 sensorButton('c-trainer', trainer, connectTrainer);
 sensorButton('c-hr', hrStrap, connectHr);
 sensorButton('c-pm', powerMeter, connectPowerMeter);

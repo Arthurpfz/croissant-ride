@@ -3,13 +3,13 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Croissant Ride</title>
-  <meta name="description" content="An indoor trainer app in the browser: pair your smart trainer, ride structured workouts in ERG and post the .FIT. Free, no account." />
+  <title>Croissant Ride: free indoor cycling app for ERG workouts in your browser</title>
+  <meta name="description" content="Free indoor cycling app in your browser: pair your smart trainer, ride structured ERG workouts or your coach's .zwo sessions, and post the .FIT to Intervals.icu, Strava, Garmin or TrainingPeaks. No install, no account." />
   <link rel="canonical" href="%VITE_SITE_URL%/" vite-ignore />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Croissant Ride" />
-  <meta property="og:title" content="Croissant Ride" />
-  <meta property="og:description" content="An indoor trainer app in the browser: pair your smart trainer, ride structured workouts in ERG and post the .FIT. Free, no account." />
+  <meta property="og:title" content="Croissant Ride: free indoor cycling app in your browser" />
+  <meta property="og:description" content="Free indoor cycling app in your browser: pair your smart trainer, ride structured ERG workouts or your coach's .zwo sessions, and post the .FIT to Intervals.icu, Strava, Garmin or TrainingPeaks. No install, no account." />
   <meta property="og:url" content="%VITE_SITE_URL%/" />
   <meta property="og:image" content="%VITE_SITE_URL%/og.png" vite-ignore />
   <meta name="twitter:card" content="summary_large_image" />
@@ -113,7 +113,7 @@
       </div>
       <div id="list" class="list"></div>
       <input id="zwo-file" type="file" accept=".zwo" multiple hidden>
-      <p class="foot">No account, no cookies: your settings and rides stay in this browser until you post a ride. · <a href="/THIRD-PARTY-NOTICES.txt" target="_blank" rel="noopener">Licences</a><span id="impressum" hidden> · <a href="%VITE_IMPRESSUM_URL%" target="_blank" rel="noopener">Impressum</a></span><span id="privacy" hidden> · <a href="%VITE_PRIVACY_URL%" target="_blank" rel="noopener">Privacy</a></span><br />Ride within your limits: check with a doctor before hard training, and stop if anything feels wrong.</p>
+      <p class="foot">No account, no cookies: your settings and rides stay in this browser until you post a ride. · <a href="/THIRD-PARTY-NOTICES.txt" target="_blank" rel="noopener">Licences</a><span id="impressum" hidden> · <a href="%VITE_IMPRESSUM_URL%" target="_blank" rel="noopener">Impressum</a></span><span id="privacy" hidden> · <a href="%VITE_PRIVACY_URL%" target="_blank" rel="noopener">Privacy</a></span><span id="tip" hidden> · <a href="%VITE_TIP_URL%" target="_blank" rel="noopener">Support</a></span><br />Ride within your limits: check with a doctor before hard training, and stop if anything feels wrong.</p>
     </div>
   </div>
 
@@ -150,6 +150,7 @@
             <small class="label">Post to</small>
           </div>
           <p id="sum-note">Downloads the .FIT and opens the site: drop the file in.</p>
+          <p id="sum-tip" hidden>Enjoyed the ride? <a id="tip-link" href="%VITE_TIP_URL%" target="_blank" rel="noopener">Buy me a croissant</a><span id="tip-wallet"><span class="or"> or </span>tip in crypto: <span id="wallets"></span></span></p>
           <div class="actions">
             <button id="btn-download">Download .FIT</button>
             <button id="btn-new" class="primary">Done</button>

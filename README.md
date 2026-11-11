@@ -23,8 +23,18 @@ One rider, no accounts, no backend: everything stays in your browser.
 ## What you need
 
 - **Browser:** Chrome or Edge on desktop or Android. They have Web Bluetooth; Safari, Firefox and every iPhone/iPad browser don't (on iOS, the Bluefy browser works).
-- **Smart trainer:** one that speaks Bluetooth FTMS (most trainers from the last few years). Tested on a Van Rysel D100.
+- **Smart trainer:** one that speaks Bluetooth FTMS (most trainers from the last few years). See the tested list below.
 - **Optional:** a Bluetooth heart-rate strap, and a cadence sensor or power meter for cadence if your trainer doesn't report it.
+
+## Tested hardware
+
+Ridden for real with the app. Yours isn't listed? [Tell us whether it works](https://github.com/Arthurpfz/croissant-ride/issues/new?template=trainer-report.yml), even in one line.
+
+| Device | Kind | Works | Notes |
+|---|---|---|---|
+| Van Rysel D100 (Decathlon) | Smart trainer, FTMS | ✅ ERG, power | No cadence from the trainer: pair a cadence sensor or power meter for it. The D100 is Bluetooth only, so bike computers can't run ERG sessions on it; this app can. |
+| SRAM Quarq power meter | Cadence | ✅ Cadence | Used for cadence only. |
+| Amazfit Helio Strap | Heart rate | ✅ Heart rate | |
 
 ## Run it locally
 
@@ -52,6 +62,10 @@ It's a static site: run `npm run build` and serve `dist/` from any static host (
 ## Privacy
 
 No accounts, no cookies, no uploads. Settings (FTP, weight) and the ride in progress live in your browser's local storage. Rides leave your computer only when you post the .FIT file yourself. The app has no analytics unless its host turns them on: the hosted copy at croissantride.com counts visits with self-hosted, cookieless Umami (see its privacy page).
+
+## Support
+
+Croissant Ride is free and stays free. If it saves you a subscription, you can [buy me a croissant on Ko-fi](https://ko-fi.com/arthurpfalzgraf). Reports from your trainer help just as much.
 
 ## Help wanted
 

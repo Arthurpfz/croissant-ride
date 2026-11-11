@@ -40,6 +40,8 @@ button.danger:hover { background: var(--surface-callout); }
 button:disabled { opacity: .4; cursor: default; }
 button.icon { width: var(--touch-target); padding: 0; }
 button.icon svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+button.link { all: unset; cursor: pointer; text-decoration: underline; } /* a button that reads as a link, inside a line of text */
+button.link:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 /* Panel: see-through charcoal surface floating over the 3D world. Secondary text is lifted on it (--ash-hud). */
 .panel { position: fixed; background: var(--surface-panel); border: var(--border) solid var(--line); border-radius: var(--radius-panel); backdrop-filter: blur(var(--blur-panel)); box-shadow: var(--shadow-panel); }
@@ -172,7 +174,9 @@ body.mini { height: 100vh; display: grid; grid-template-columns: auto minmax(0, 
 .post { display: flex; gap: var(--space-5); flex-wrap: wrap; align-items: center; }
 .post .label { flex-basis: 100%; margin-bottom: var(--space-1); }
 .post button { padding: 0 var(--space-9); border-radius: var(--radius-pill); font-size: 15px; }
-#sum-note { margin: 0; color: var(--muted); font-size: var(--fs-body); }
+#sum-note, #sum-tip { margin: 0; color: var(--muted); font-size: var(--fs-body); }
+#sum-tip { overflow-wrap: anywhere; } #sum-tip a { color: inherit; }
+#sum-tip[hidden], #sum-tip [hidden] { display: none; }
 .post-box .actions { margin-top: auto; }
 
 /* ── HUD layout ───────────────────────────────────────────────────────────── */

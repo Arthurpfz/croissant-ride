@@ -64,7 +64,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md). [CLAUDE.md](CLAUDE.md) has a detailed ma
 
 ## Licence
 
-[Apache-2.0](LICENSE). Bundled third-party software, fonts and map data are listed in [public/THIRD-PARTY-NOTICES.txt](public/THIRD-PARTY-NOTICES.txt). The Col du Galibier contains IGN data (BD TOPO®, RGE ALTI®), Licence Ouverte 2.0.
+[Apache-2.0](LICENSE). Bundled third-party software, fonts and map data are listed in [public/THIRD-PARTY-NOTICES.txt](public/THIRD-PARTY-NOTICES.txt). The Col du Galibier contains IGN data (BD TOPO®, RGE ALTI®, ORTHO-EXPRESS), Licence Ouverte 2.0.
 
 ## Name and logo
 

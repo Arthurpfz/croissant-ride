@@ -242,9 +242,20 @@ function dem(g: Extract<SkinData['ground'], { type: 'dem' }>, grids: TerrainGrid
     }
     return geo;
   })];
-  return geos.map((geo) => {
+  // a skin with `photo` drapes each grid's aerial photo over its mesh (the strip takes the finest grid's) instead
+  const photos = g.photo ? grids.map((grid) => grid.image && Object.assign(new THREE.Texture(grid.image), { colorSpace: THREE.SRGBColorSpace, anisotropy: 8, needsUpdate: true })) : [];
+  return geos.map((geo, m) => {
     geo.computeVertexNormals();
     const pos = geo.attributes.position, nrm = geo.attributes.normal, cols: number[] = [];
+    const map = photos[Math.max(0, m - 1)], grid = grids[Math.max(0, m - 1)];
+    if (map) {
+      const uv: number[] = [];
+      for (let i = 0; i < pos.count; i++) uv.push((pos.getX(i) - grid.x0) / ((grid.nx - 1) * grid.cell), 1 - (pos.getZ(i) - grid.z0) / ((grid.nz - 1) * grid.cell));
+      geo.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2));
+      const mesh = new THREE.Mesh(geo, photoGround(map));
+      mesh.receiveShadow = true;
+      return mesh;
+    }
     for (let i = 0; i < pos.count; i++) {
       const x = pos.getX(i), z = pos.getZ(i), h = pos.getY(i), ny = nrm.getY(i), north = -nrm.getZ(i);
       const n1 = fbm(x / 180, z / 180), n2 = fbm(x / 45, z / 45);
@@ -261,6 +272,34 @@ function dem(g: Extract<SkinData['ground'], { type: 'dem' }>, grids: TerrainGrid
     mesh.receiveShadow = true;
     return mesh;
   });
+}
+
+// Ground wearing an aerial photo. The photo brings its own light and shadows, so half of it shows unlit and the sun
+// only models the rest; a photo pixel is metres wide, so near the camera a fine grain (one noise tile at three
+// sizes) stands in for the grass and stones it cannot show.
+let grain: THREE.Texture | undefined; // shared by every skin, never freed (256 px)
+function photoGround(map: THREE.Texture) {
+  if (!grain) {
+    const cv = document.createElement('canvas'), rand = seeded(7);
+    cv.width = cv.height = 256;
+    const g = cv.getContext('2d')!, px = g.createImageData(256, 256);
+    for (let i = 0; i < px.data.length; i += 4) { px.data[i] = px.data[i + 1] = px.data[i + 2] = rand() * 255; px.data[i + 3] = 255; }
+    g.putImageData(px, 0, 0);
+    grain = texture(cv);
+    grain.colorSpace = THREE.NoColorSpace;
+  }
+  const mat = new THREE.MeshLambertMaterial({ map, emissiveMap: map, emissive: '#808080' });
+  mat.onBeforeCompile = (sh) => {
+    sh.uniforms.grain = { value: grain };
+    sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying vec2 vGround;')
+      .replace('#include <begin_vertex>', '#include <begin_vertex>\nvGround = (modelMatrix * vec4(position, 1.0)).xz;');
+    sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nuniform sampler2D grain;\nvarying vec2 vGround;')
+      .replace('#include <map_fragment>', `#include <map_fragment>
+        float fine = texture2D(grain, vGround / 5.0).r + texture2D(grain, vGround / 23.0).r, patches = texture2D(grain, vGround / 190.0).r;
+        float d = length(vViewPosition);
+        diffuseColor.rgb *= mix(1.0, 0.55 + 0.45 * fine, 1.0 - smoothstep(30.0, 250.0, d)) * mix(1.0, 0.85 + 0.3 * patches, 1.0 - smoothstep(200.0, 1500.0, d));`);
+  };
+  return mat;
 }
 
 // ground mesh of every `cell`-sized square within `r` m of the road

@@ -45,6 +45,7 @@ export const ftms: TrainerDriver = {
     queue = Promise.resolve();
     write([0x00]); // request control
     write([0x07]); // start/resume
+    await queue; // one GATT operation at a time: Chrome on Android fails the subscriptions below if these writes are still in flight
     await subscribe(server, FTMS, BIKE_DATA, (v) => parseBikeData(v, io));
     // Some trainers (e.g. Van Rysel D100) only report cadence via Cycling Power or CSC crank data
     const cad = crankCadence(io.cadence);

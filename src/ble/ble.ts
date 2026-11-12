@@ -55,7 +55,10 @@ export async function connectSensor(
       try { await open(); } catch { /* keep retrying */ }
     }
   });
-  try { await open(); } catch (e) { if (!ever) set('idle'); throw e; }
+  try {
+    // Chrome on Android often fails the first GATT operations after pairing: try once more on a fresh connection
+    await open().catch(async () => { dev.gatt!.disconnect(); await new Promise((r) => setTimeout(r, 1000)); await open(); });
+  } catch (e) { if (!ever) set('idle'); throw e; }
   return dev;
 }
 

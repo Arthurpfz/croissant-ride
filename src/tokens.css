@@ -69,6 +69,12 @@
   --map-rider: var(--crust);
   --map-rider-ring: var(--charcoal);
 
+  /* plain background (the still picture that stands in for the 3D world) */
+  --plain-base: #131415;
+  --plain-glow: rgba(120, 120, 118, .18);
+  --plain-glow-2: rgba(90, 90, 90, .16);
+  --plain-dot: rgba(0, 0, 0, .38);
+
   /* type */
   --font-sans: 'Geist', system-ui, -apple-system, 'Segoe UI', sans-serif; /* headings + body */
   --font-mono: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace;   /* labels, units, durations, small numbers */

@@ -217,7 +217,6 @@ async function startRide(w: Workout) {
   audio.unlock();
   const r = routeById(w.route), s = skinFor(r);
   if (route?.data !== r || world.skin !== s) await world.show(r, s);
-  $('btn-world').hidden = skinsFor(r).length < 2;
   rec.start(`Croissant Ride — ${w.name}${DEMO ? DEMO_TAG : ''}`);
   ride.start(w);
   $('start').hidden = true;
@@ -263,10 +262,20 @@ function changeTarget(d: number) {
   ride.changeTarget(d);
   hud.refreshSteps();
 }
+// Plain background: the last stop of the world cycle, on every route. The 3D world is hidden and no longer drawn
+// (easier on slow phones and the battery); remembered across visits.
+let plain = false;
+function setPlain(on: boolean) {
+  plain = on;
+  document.body.classList.toggle('plain', on);
+  try { localStorage.setItem('world-plain', on ? '1' : ''); } catch {}
+}
+try { setPlain(!!localStorage.getItem('world-plain')); } catch {}
 function nextSkin() {
-  const fit = skinsFor(route.data);
-  if (fit.length < 2) return;
-  const s = fit[(fit.indexOf(world.skin) + 1) % fit.length];
+  const fit = skinsFor(route.data), i = fit.indexOf(world.skin);
+  if (!plain && i === fit.length - 1) { setPlain(true); hud.banner('Plain background', 2000); return; }
+  const s = fit[plain ? 0 : i + 1];
+  setPlain(false);
   try { localStorage.setItem(skinKey(route.data), s.id); } catch {}
   hud.banner(s.name, 2000);
   world.switchSkin(s);
@@ -418,7 +427,7 @@ function frame(now: number) {
   // no cadence source (e.g. a trainer that reports none): legs still turn while there's power
   legCad += ((menu ? 70 : live.cadence || (live.power > 0 ? 85 : 0)) - legCad) * k;
   effort += (live.power / settings.ftp - effort) * k;
-  world.render(dt, menu ? menuDistance : live.distance + ahead, legCad, menu ? 4 : live.speed, effort);
+  if (!plain) world.render(dt, menu ? menuDistance : live.distance + ahead, legCad, menu ? 4 : live.speed, effort);
   requestAnimationFrame(frame);
 }
 requestAnimationFrame(frame);

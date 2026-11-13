@@ -53,7 +53,7 @@ Then open `http://localhost:5173/?sim=1`. The simulator fakes a trainer, heart r
 | `?observe=1` | Read-only trainer: never takes control (e.g. beside another app) |
 | `?debug=1` | Logs raw Bluetooth packets and trainer commands |
 
-**Ride shortcuts:** `Space` pause · `+`/`-` (or Page Up/Down) target ±10 W · `E` ERG ⇄ ride by feel · `M` mute cues · `W` next world · `?` all shortcuts.
+**Ride shortcuts:** `Space` pause · `+`/`-` (or Page Up/Down) target ±10 W · `E` ERG ⇄ ride by feel · `M` mute cues · `W` next world (the last one is a plain still background, lighter on slow phones) · `?` all shortcuts.
 
 ## Host your own
 

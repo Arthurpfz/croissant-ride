@@ -10,7 +10,7 @@ One rider, no accounts, no backend: everything stays in your browser.
 
 ## Features
 
-- **ERG workouts:** six built-in sessions in % of FTP, plus Free Ride. Import your own as Zwift-format `.zwo` files (what TrainingPeaks, Intervals.icu and others export), including coach notes.
+- **ERG workouts:** six built-in sessions in % of FTP, plus Free Ride. Import your own as Zwift-format `.zwo` files (what TrainingPeaks, Intervals.icu and others export), including coach notes and target cadence.
 - **Ramp FTP test:** the target rises every minute until you can't hold it; the summary works out your FTP (75 % of your best minute) and saves it on one click.
 - **Live data:** power (3 s average), heart rate, cadence, virtual speed and distance; target, time left in the step and the whole workout as a bar chart.
 - **Rider controls:** target ±10 W, ride a step by feel (ERG off), skip, pause. Keyboard shortcuts; a Bluetooth presentation clicker or the original Zwift Click works as a handlebar remote.

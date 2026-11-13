@@ -13,22 +13,24 @@ export function parseZwo(xml: string, fallbackName: string): Workout {
     const a = (k: string) => { const v = [...el.attributes].find((x) => x.name.toLowerCase() === k)?.value; return v === undefined ? undefined : Number(v); };
     const pct = (k: string) => (a(k) === undefined ? undefined : Math.round(a(k)! * 100));
     const dur = Math.round(a('duration') ?? 0);
+    // target cadence: Cadence, or the middle of CadenceLow–CadenceHigh
+    const cad = (k = 'cadence') => { const c = a(k) ?? ((a(k + 'low') ?? NaN) + (a(k + 'high') ?? NaN)) / 2; return c > 0 ? { cad: Math.round(c) } : {}; };
     const first = steps.length;
     switch (el.tagName.toLowerCase()) {
       case 'steadystate': // a target range (PowerLow–PowerHigh) rides at its midpoint
-        steps.push({ dur, from: pct('power') ?? Math.round(((a('powerlow') ?? NaN) + (a('powerhigh') ?? a('powerlow') ?? NaN)) * 50) }); break;
-      case 'warmup': case 'ramp': steps.push({ dur, from: pct('powerlow')!, to: pct('powerhigh') }); break;
+        steps.push({ dur, from: pct('power') ?? Math.round(((a('powerlow') ?? NaN) + (a('powerhigh') ?? a('powerlow') ?? NaN)) * 50), ...cad() }); break;
+      case 'warmup': case 'ramp': steps.push({ dur, from: pct('powerlow')!, to: pct('powerhigh'), ...cad() }); break;
       case 'cooldown': { // Zwift always ramps a cooldown down, whatever the attribute order
         const [x, y] = [pct('powerlow')!, pct('powerhigh')!];
-        steps.push({ dur, from: Math.max(x, y), to: Math.min(x, y) }); break;
+        steps.push({ dur, from: Math.max(x, y), to: Math.min(x, y), ...cad() }); break;
       }
       case 'intervalst': {
         const n = a('repeat') ?? 1, on = Math.round(a('onduration') ?? 0), off = Math.round(a('offduration') ?? 0);
         const onP = pct('onpower') ?? pct('poweronhigh') ?? pct('poweronlow')!, offP = pct('offpower') ?? pct('powerofflow') ?? pct('poweroffhigh')!;
-        for (let i = 1; i <= n; i++) steps.push({ dur: on, from: onP, rep: [i, n] }, ...(off ? [{ dur: off, from: offP }] : []));
+        for (let i = 1; i <= n; i++) steps.push({ dur: on, from: onP, rep: [i, n], ...cad() }, ...(off ? [{ dur: off, from: offP, ...cad('cadenceresting') }] : []));
         break;
       }
-      case 'freeride': steps.push({ dur, from: 50, free: true, label: 'Free ride' }); break;
+      case 'freeride': steps.push({ dur, from: 50, free: true, label: 'Free ride', ...cad() }); break;
       case 'maxeffort': steps.push({ dur, from: 150, free: true, label: 'Max effort' }); break;
     }
     // coach notes (<textevent timeoffset message>), placed on the step they fall in

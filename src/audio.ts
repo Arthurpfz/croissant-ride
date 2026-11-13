@@ -57,5 +57,5 @@ export function describe(st: Step | undefined, offset: number) {
   const what = st.free ? (st.label ?? 'Free riding').replace('~', 'about ')
     : st.to === undefined ? `${w(st.from)} watts`
     : `${st.label ? st.label + ', ' : ''}${w(st.from)} to ${w(st.to)} watts`;
-  return `${what}, ${time}`;
+  return `${what}, ${time}${st.cad ? `, at ${st.cad} R P M` : ''}`;
 }

@@ -17,7 +17,7 @@ const dur = (s: number) => (s >= 60 ? `${Math.round(s / 60)} min` : `${s} s`);
 export function stepLabel(st: Step, offset: number) {
   if (st.label && st.to === undefined && st.free) return `${dur(st.dur)} ${st.label}`;
   const w = st.to === undefined ? `${watts(st.from, offset)} W` : `${watts(st.from, offset)}→${watts(st.to, offset)} W`;
-  return `${st.label && st.to !== undefined ? st.label + ' ' : ''}${dur(st.dur)} @ ${w}`;
+  return `${st.label && st.to !== undefined ? st.label + ' ' : ''}${dur(st.dur)} @ ${w}${st.cad ? ` · ${st.cad} rpm` : ''}`;
 }
 
 export function drawProfile(cv: HTMLCanvasElement, w: Workout, progress?: number) {
@@ -89,7 +89,7 @@ export function update(w: Workout, wT: number, offset: number, target: number | 
   $('d-avg').textContent = Math.round(avgPower).toString();
   $('d-kj').textContent = Math.round(live.kj).toString();
 
-  const cad = `<b>${Math.round(live.cadence)}</b> rpm`;
+  const cad = `<b>${Math.round(live.cadence)}</b>${cur?.step.cad ? ` / ${cur.step.cad}` : ''} rpm`; // live / target
   const state = $('d-state');
   let s: 'low' | 'ok' | 'high' | '' = '', cue = '';
   if (cur && target !== null) {

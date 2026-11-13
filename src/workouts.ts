@@ -2,8 +2,8 @@ import { token } from './tokens';
 import { settings } from './state';
 
 // Workout library (% FTP). `to` = ramp end, `free` = no ERG (sprints / free ride), `rep` = "2 of 3" label,
-// `notes` = coach messages [s into the step, text] (from imported .zwo textevents).
-export interface Step { dur: number; from: number; to?: number; free?: boolean; label?: string; rep?: [number, number]; notes?: [number, string][] }
+// `cad` = target cadence (rpm, shown and spoken, never enforced), `notes` = coach messages [s into the step, text] (from imported .zwo textevents).
+export interface Step { dur: number; from: number; to?: number; free?: boolean; label?: string; rep?: [number, number]; cad?: number; notes?: [number, string][] }
 // route: worlds/routes id (default: the flat loop). test: 'ramp' = an FTP test: first step warm-up, last step cool-down,
 // the ride engine ends the ramp between them when the rider can't hold it, and the summary proposes a new FTP.
 export interface Workout { id: string; name: string; who: string; steps: Step[]; route?: string; test?: 'ramp' }

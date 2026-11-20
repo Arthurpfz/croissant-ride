@@ -42,8 +42,9 @@ const io: TrainerIO = {
 
 export const connectTrainer = (device?: BluetoothDevice) =>
   connectSensor(trainer, drivers.map((d) => d.service), async (server) => {
-    const have = new Set((await server.getPrimaryServices()).map((s) => s.uuid));
-    const d = drivers.find((d) => have.has(uuid(d.service)));
+    // ask for each driver's service directly: Bluefy reports service UUIDs in its own format (uppercase/short)
+    let d: TrainerDriver | undefined;
+    for (const x of drivers) if (await server.getPrimaryService(uuid(x.service)).then(() => true, () => false)) { d = x; break; }
     if (!d) throw new Error(`${trainer.name} speaks no supported trainer protocol`);
     lastErg = -1; lastGrade = NaN; // resend the current target after a reconnect
     await d.setup(server, io, !OBSERVE);

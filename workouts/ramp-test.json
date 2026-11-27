@@ -1,6 +1,7 @@
 {
   "name": "Ramp FTP test",
   "who": "Harder every minute until you can't hold it · about 25 min",
+  "tag": "Test",
   "test": "ramp",
   "steps": [
     { "min": 5, "pct": 46, "label": "Warm-up" },

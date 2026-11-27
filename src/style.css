@@ -102,6 +102,8 @@ body.mini { height: 100vh; display: grid; grid-template-columns: auto minmax(0, 
 .wo-top { display: flex; justify-content: space-between; align-items: baseline; gap: var(--space-6); }
 .wo strong { font-size: var(--fs-card); font-weight: var(--fw-semibold); letter-spacing: -.01em; }
 .wo time { font-family: var(--font-mono); font-size: var(--fs-unit); color: var(--soft); white-space: nowrap; }
+.wo-tag { margin: 0; color: var(--soft); font-family: var(--font-sans); font-size: var(--fs-unit); }
+.wo-tag b { font-family: var(--font-mono); font-weight: var(--fw-regular); letter-spacing: var(--track-chip); text-transform: uppercase; color: var(--tag); margin-right: var(--space-3); }
 .wo em { font-style: normal; color: var(--muted); font-size: var(--fs-body); }
 .wo canvas { width: 100%; height: 60px; margin-top: auto; }
 .wo.free, .wo-import { min-height: 96px; justify-content: center; }
@@ -150,6 +152,12 @@ body.mini { height: 100vh; display: grid; grid-template-columns: auto minmax(0, 
 #no-bt { margin: var(--space-8) 0 0; padding: var(--space-5) var(--space-7); background: var(--surface-callout); border: var(--border) solid var(--accent); border-radius: var(--radius-ctl); }
 #recover button, #sum-ftp button { margin-left: auto; } #recover button + button { margin-left: 0; }
 .list-head { display: flex; justify-content: space-between; align-items: baseline; gap: var(--space-4) var(--space-8); flex-wrap: wrap; margin: var(--space-14) 0 var(--space-8); }
+.imported { margin-top: var(--space-14); }
+/* Tabs: a segmented control; the selected tab is raised. */
+.tabs { display: inline-flex; padding: var(--space-1); gap: var(--space-1); background: var(--surface-input); border: var(--border) solid var(--line-strong); border-radius: var(--radius-ctl); margin-right: auto; }
+.tabs button { white-space: nowrap; padding: 0 var(--space-6); background: none; border: 0; border-radius: var(--radius-sm); color: var(--soft); font-weight: var(--fw-regular); }
+.tabs button[aria-selected=true] { background: var(--surface-raised); color: var(--text); }
+.tabs small { margin: 0; }
 .legend { display: flex; gap: var(--space-8); flex-wrap: wrap; font-family: var(--font-mono); font-size: var(--fs-label); color: var(--muted); }
 .legend span { display: flex; align-items: center; gap: var(--space-3); }
 .legend i { width: 10px; height: 10px; border-radius: var(--radius-xs); background: var(--c); }
@@ -303,6 +311,7 @@ body.mini { height: 100vh; display: grid; grid-template-columns: auto minmax(0, 
   .sum { grid-template-columns: 1fr; }
   #sum-title { font-size: var(--fs-h1); }
   .wo { min-height: 150px; }
+  .tabs { width: 100%; } .tabs button { flex: 1; padding: 0 var(--space-2); }
 }
 
 /* phones + short screens: smaller hero number, no workout graph (the progress bar stands in) */

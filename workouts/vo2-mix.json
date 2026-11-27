@@ -1,6 +1,7 @@
 {
   "name": "70-min VO₂ Mix",
   "who": "VO₂max + anaerobic · 3′, 1′, 30″ and sprints",
+  "tag": "VO₂max",
   "steps": [
     { "warmup": 20 },
     { "repeat": 6, "steps": [{ "min": 3, "pct": 105 }, { "min": 1, "pct": 50 }] },

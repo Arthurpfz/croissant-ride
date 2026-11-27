@@ -1,0 +1,10 @@
+{
+  "name": "Tempo 2×20",
+  "who": "Long-course race intensity · short day",
+  "tag": "Tempo",
+  "steps": [
+    { "warmup": 10 },
+    { "repeat": 2, "lastRecovery": false, "steps": [{ "min": 20, "pct": 80 }, { "min": 5, "pct": 55 }] },
+    { "cooldown": 5 }
+  ]
+}

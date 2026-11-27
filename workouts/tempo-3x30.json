@@ -1,9 +1,10 @@
 {
-  "name": "Endurance 3×30",
-  "who": "Aerobic base",
+  "name": "Tempo 3×30",
+  "who": "Long-course race intensity",
+  "tag": "Tempo",
   "steps": [
-    { "warmup": 15 },
+    { "warmup": 10 },
     { "repeat": 3, "lastRecovery": false, "steps": [{ "min": 30, "pct": 80 }, { "min": 5, "pct": 55 }] },
-    { "cooldown": 10 }
+    { "cooldown": 5 }
   ]
 }

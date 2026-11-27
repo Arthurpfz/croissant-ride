@@ -1,0 +1,10 @@
+{
+  "name": "Zone 2 · 60 min",
+  "who": "Steady aerobic ride · conversational",
+  "tag": "Zone 2",
+  "steps": [
+    { "warmup": 10 },
+    { "min": 45, "pct": 68 },
+    { "cooldown": 5 }
+  ]
+}

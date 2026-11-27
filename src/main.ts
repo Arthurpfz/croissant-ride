@@ -149,39 +149,59 @@ function card(name: string, sub: string, onclick: () => void, time = '', tag?: T
   t.textContent = name; e.textContent = sub;
   top.append(t);
   if (time) top.append(Object.assign(document.createElement('time'), { textContent: time }));
+  b.append(top);
   if (tag) {
     const g = Object.assign(document.createElement('small'), { className: 'wo-tag' });
     g.append(Object.assign(document.createElement('b'), { textContent: tag }), TAGS[tag].why);
     g.style.setProperty('--tag', `var(--zone-${TAGS[tag].zone})`);
     b.append(g);
   }
-  b.append(top, e);
+  b.append(e);
   b.onclick = onclick;
+  return b;
+}
+// Built-ins sit in three tabs by length (about 1 h = up to 75 min), easiest tag first; imported sessions stay above them.
+const importedList = $('imported'), tabs = $('wo-tabs');
+const TABS = { '1h': 'About 1 h', '2h': '1 h 30 – 2 h', free: 'Free ride' } as const;
+type Tab = keyof typeof TABS;
+let tab: Tab = (() => { try { const t = localStorage.getItem('wo-tab'); return t && t in TABS ? t as Tab : '1h'; } catch { return '1h'; } })();
+const tabOf = (w: Workout): Tab => { const T = totalDuration(w); return !T ? 'free' : T <= 75 * 60 ? '1h' : '2h'; };
+const tagRank = (w: Workout) => (w.tag ? Object.keys(TAGS).indexOf(w.tag) : 99);
+function woCard(w: Workout, imported: Workout[]) {
+  const T = totalDuration(w);
+  const b = card(w.name, w.who, () => startRide(w), T ? hud.fmt(T) : '∞', w.tag);
+  if (T) {
+    const cv = document.createElement('canvas');
+    cv.width = 500; cv.height = 120;
+    hud.drawProfile(cv, w);
+    b.append(cv);
+  } else b.classList.add('free');
+  if (imported.includes(w)) {
+    const x = document.createElement('span');
+    x.className = 'wo-remove'; x.textContent = '✕'; x.title = 'Remove';
+    x.onclick = (ev) => {
+      ev.stopPropagation();
+      if (confirm(`Remove "${w.name}"?`)) { saveImported(imported.filter((o) => o !== w)); renderList(); }
+    };
+    b.append(x);
+  }
   return b;
 }
 function renderList() {
   const imported = loadImported();
-  const all = [...imported, ...workouts];
-  list.replaceChildren(...[...all.filter(totalDuration), ...all.filter((w) => !totalDuration(w))].map((w) => {
-    const T = totalDuration(w);
-    const b = card(w.name, w.who, () => startRide(w), T ? hud.fmt(T) : '∞', w.tag);
-    if (T) {
-      const cv = document.createElement('canvas');
-      cv.width = 500; cv.height = 120;
-      hud.drawProfile(cv, w);
-      b.append(cv);
-    } else b.classList.add('free');
-    if (imported.includes(w)) {
-      const x = document.createElement('span');
-      x.className = 'wo-remove'; x.textContent = '✕'; x.title = 'Remove';
-      x.onclick = (ev) => {
-        ev.stopPropagation();
-        if (confirm(`Remove "${w.name}"?`)) { saveImported(imported.filter((o) => o !== w)); renderList(); }
-      };
-      b.append(x);
-    }
+  importedList.hidden = !imported.length;
+  importedList.replaceChildren(...imported.map((w) => woCard(w, imported)));
+  tabs.replaceChildren(...(Object.keys(TABS) as Tab[]).map((t) => {
+    const b = Object.assign(document.createElement('button'), { type: 'button', textContent: TABS[t] });
+    b.setAttribute('role', 'tab');
+    b.setAttribute('aria-selected', String(t === tab));
+    b.append(Object.assign(document.createElement('small'), { textContent: String(workouts.filter((w) => tabOf(w) === t).length) }));
+    b.onclick = () => { tab = t; try { localStorage.setItem('wo-tab', t); } catch {} renderList(); };
     return b;
-  }), Object.assign(card('Import session', 'Zwift .zwo file, e.g. from TrainingPeaks: Export → ZWO', () => zwoIn.click()), { className: 'wo wo-import' }));
+  }));
+  const shown = workouts.filter((w) => tabOf(w) === tab).sort((a, b) => tagRank(a) - tagRank(b) || totalDuration(a) - totalDuration(b));
+  list.replaceChildren(...shown.map((w) => woCard(w, imported)),
+    ...(tab === 'free' ? [Object.assign(card('Import session', 'Zwift .zwo file, e.g. from TrainingPeaks: Export → ZWO', () => zwoIn.click()), { className: 'wo wo-import' })] : []));
 }
 zwoIn.onchange = async () => {
   let imported = loadImported();

@@ -1,0 +1,10 @@
+{
+  "name": "3×10 Threshold",
+  "who": "Long-course engine · short day",
+  "tag": "Threshold",
+  "steps": [
+    { "warmup": 15 },
+    { "repeat": 3, "lastRecovery": false, "steps": [{ "min": 10, "pct": 95 }, { "min": 5, "pct": 55 }] },
+    { "cooldown": 5 }
+  ]
+}

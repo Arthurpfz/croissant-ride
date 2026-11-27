@@ -195,7 +195,6 @@ function renderList() {
     const b = Object.assign(document.createElement('button'), { type: 'button', textContent: TABS[t] });
     b.setAttribute('role', 'tab');
     b.setAttribute('aria-selected', String(t === tab));
-    b.append(Object.assign(document.createElement('small'), { textContent: String(workouts.filter((w) => tabOf(w) === t).length) }));
     b.onclick = () => { tab = t; try { localStorage.setItem('wo-tab', t); } catch {} renderList(); };
     return b;
   }));

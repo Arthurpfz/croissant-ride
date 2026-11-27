@@ -157,7 +157,6 @@ body.mini { height: 100vh; display: grid; grid-template-columns: auto minmax(0, 
 .tabs { display: inline-flex; padding: var(--space-1); gap: var(--space-1); background: var(--surface-input); border: var(--border) solid var(--line-strong); border-radius: var(--radius-ctl); margin-right: auto; }
 .tabs button { white-space: nowrap; padding: 0 var(--space-6); background: none; border: 0; border-radius: var(--radius-sm); color: var(--soft); font-weight: var(--fw-regular); }
 .tabs button[aria-selected=true] { background: var(--surface-raised); color: var(--text); }
-.tabs small { margin: 0; }
 .legend { display: flex; gap: var(--space-8); flex-wrap: wrap; font-family: var(--font-mono); font-size: var(--fs-label); color: var(--muted); }
 .legend span { display: flex; align-items: center; gap: var(--space-3); }
 .legend i { width: 10px; height: 10px; border-radius: var(--radius-xs); background: var(--c); }

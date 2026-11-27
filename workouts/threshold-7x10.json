@@ -3,8 +3,8 @@
   "who": "Long-course engine",
   "tag": "Threshold",
   "steps": [
-    { "warmup": 30 },
+    { "warmup": 15 },
     { "repeat": 7, "lastRecovery": false, "steps": [{ "min": 10, "pct": 92 }, { "min": 1, "pct": 55 }] },
-    { "cooldown": 20 }
+    { "cooldown": 10 }
   ]
 }

@@ -1,0 +1,10 @@
+{
+  "name": "2×15min Sweet Spot",
+  "who": "Base staple · short day",
+  "tag": "Sweet Spot",
+  "steps": [
+    { "warmup": 15 },
+    { "repeat": 2, "lastRecovery": false, "steps": [{ "min": 15, "pct": 89 }, { "min": 5, "pct": 57 }] },
+    { "cooldown": 10 }
+  ]
+}

@@ -6,8 +6,15 @@ import { settings } from './state';
 export interface Step { dur: number; from: number; to?: number; free?: boolean; label?: string; rep?: [number, number]; cad?: number; notes?: [number, string][] }
 // route: worlds/routes id (default: the flat loop). test: 'ramp' = an FTP test: first step warm-up, last step cool-down,
 // the ride engine ends the ramp between them when the rider can't hold it, and the summary proposes a new FTP.
-// tag = the session's purpose, shown on its card in that zone's colour.
-export const TAGS = { 'Zone 2': 2, Tempo: 3, 'Sweet Spot': 3, Threshold: 4, 'VO₂max': 5, Test: 1 } as const;
+// tag = the session's purpose, shown on its card in that zone's colour with its `why`.
+export const TAGS = {
+  'Zone 2': { zone: 2, why: 'Easy, all-day pace: builds the aerobic engine the rest sits on' },
+  Tempo: { zone: 3, why: 'Steady and controlled: long-distance race pace' },
+  'Sweet Spot': { zone: 3, why: 'Just under threshold: the most fitness for the fatigue' },
+  Threshold: { zone: 4, why: 'About your 1-hour power: raises your FTP' },
+  'VO₂max': { zone: 5, why: 'Hard efforts of 30 s to 5 min: raise your ceiling' },
+  Test: { zone: 1, why: 'Measures your FTP so every target fits you' },
+} as const;
 export type Tag = keyof typeof TAGS;
 export interface Workout { id: string; name: string; who: string; steps: Step[]; route?: string; test?: 'ramp'; tag?: Tag }
 

@@ -150,8 +150,9 @@ function card(name: string, sub: string, onclick: () => void, time = '', tag?: T
   top.append(t);
   if (time) top.append(Object.assign(document.createElement('time'), { textContent: time }));
   if (tag) {
-    const g = Object.assign(document.createElement('small'), { className: 'wo-tag', textContent: tag });
-    g.style.setProperty('--tag', `var(--zone-${TAGS[tag]})`);
+    const g = Object.assign(document.createElement('small'), { className: 'wo-tag' });
+    g.append(Object.assign(document.createElement('b'), { textContent: tag }), TAGS[tag].why);
+    g.style.setProperty('--tag', `var(--zone-${TAGS[tag].zone})`);
     b.append(g);
   }
   b.append(top, e);

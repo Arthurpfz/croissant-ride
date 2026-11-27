@@ -102,6 +102,7 @@ body.mini { height: 100vh; display: grid; grid-template-columns: auto minmax(0, 
 .wo-top { display: flex; justify-content: space-between; align-items: baseline; gap: var(--space-6); }
 .wo strong { font-size: var(--fs-card); font-weight: var(--fw-semibold); letter-spacing: -.01em; }
 .wo time { font-family: var(--font-mono); font-size: var(--fs-unit); color: var(--soft); white-space: nowrap; }
+.wo-tag { align-self: flex-start; font-family: var(--font-mono); font-size: var(--fs-unit); letter-spacing: var(--track-chip); text-transform: uppercase; color: var(--tag); }
 .wo em { font-style: normal; color: var(--muted); font-size: var(--fs-body); }
 .wo canvas { width: 100%; height: 60px; margin-top: auto; }
 .wo.free, .wo-import { min-height: 96px; justify-content: center; }

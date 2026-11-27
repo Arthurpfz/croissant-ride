@@ -1,6 +1,7 @@
 {
   "name": "7×10 Threshold",
   "who": "Long-course engine",
+  "tag": "Threshold",
   "steps": [
     { "warmup": 30 },
     { "repeat": 7, "lastRecovery": false, "steps": [{ "min": 10, "pct": 92 }, { "min": 1, "pct": 55 }] },

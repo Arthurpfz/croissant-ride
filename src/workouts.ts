@@ -6,7 +6,10 @@ import { settings } from './state';
 export interface Step { dur: number; from: number; to?: number; free?: boolean; label?: string; rep?: [number, number]; cad?: number; notes?: [number, string][] }
 // route: worlds/routes id (default: the flat loop). test: 'ramp' = an FTP test: first step warm-up, last step cool-down,
 // the ride engine ends the ramp between them when the rider can't hold it, and the summary proposes a new FTP.
-export interface Workout { id: string; name: string; who: string; steps: Step[]; route?: string; test?: 'ramp' }
+// tag = the session's purpose, shown on its card in that zone's colour.
+export const TAGS = { 'Zone 2': 2, Tempo: 3, 'Sweet Spot': 3, Threshold: 4, 'VO₂max': 5, Test: 1 } as const;
+export type Tag = keyof typeof TAGS;
+export interface Workout { id: string; name: string; who: string; steps: Step[]; route?: string; test?: 'ramp'; tag?: Tag }
 
 // Built-in sessions: one JSON file each in `workouts/`, in % FTP. A step is { min | sec, pct, free?, label? },
 // { warmup: min } (50 → 75 %), { cooldown: min } (60 → 40 %), { ramp: { from, by, count } } (1-min steps, each `by` %
@@ -30,9 +33,9 @@ function expand(f: FileStep, rep = 0): Step[] {
   return [{ dur: (f.min ?? 0) * 60 + (f.sec ?? 0), from: Array.isArray(f.pct) ? f.pct[rep] : f.pct!, free: f.free, label: f.label }];
 }
 
-const files = import.meta.glob<{ name: string; who: string; steps: FileStep[]; test?: 'ramp' }>('../workouts/*.json', { eager: true, import: 'default' });
+const files = import.meta.glob<{ name: string; who: string; steps: FileStep[]; test?: 'ramp'; tag?: Tag }>('../workouts/*.json', { eager: true, import: 'default' });
 export const workouts: Workout[] = [
-  ...Object.entries(files).map(([p, w]) => ({ id: p.slice(p.lastIndexOf('/') + 1, -5), name: w.name, who: w.who, steps: w.steps.flatMap((st) => expand(st)), test: w.test })),
+  ...Object.entries(files).map(([p, w]) => ({ id: p.slice(p.lastIndexOf('/') + 1, -5), name: w.name, who: w.who, steps: w.steps.flatMap((st) => expand(st)), test: w.test, tag: w.tag })),
   { id: 'free', name: 'Free Ride', who: 'Just ride the loop', steps: [] },
   { id: 'galibier', name: 'Col du Galibier', who: 'Valloire → 2,642 m · 18 km at 7 % · map data IGN', steps: [], route: 'galibier' },
 ];

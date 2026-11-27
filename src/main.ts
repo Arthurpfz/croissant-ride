@@ -1,5 +1,5 @@
 import { live, settings, reading, dropStale, beats } from './state';
-import { workouts, totalDuration, type Workout } from './workouts';
+import { workouts, totalDuration, TAGS, type Tag, type Workout } from './workouts';
 import { createRide } from './engine';
 import { route } from './world/route';
 import { ROUTE, routeById, skinById, skinsFor, type RouteData } from './world/packs';
@@ -141,7 +141,7 @@ wkg();
 
 // Imported sessions first (usually today's), then the built-ins, then free rides and the Import card.
 const list = $('list'), zwoIn = $<HTMLInputElement>('zwo-file');
-function card(name: string, sub: string, onclick: () => void, time = '') {
+function card(name: string, sub: string, onclick: () => void, time = '', tag?: Tag) {
   const b = document.createElement('button');
   b.className = 'wo';
   const top = document.createElement('span'), t = document.createElement('strong'), e = document.createElement('em');
@@ -149,6 +149,11 @@ function card(name: string, sub: string, onclick: () => void, time = '') {
   t.textContent = name; e.textContent = sub;
   top.append(t);
   if (time) top.append(Object.assign(document.createElement('time'), { textContent: time }));
+  if (tag) {
+    const g = Object.assign(document.createElement('small'), { className: 'wo-tag', textContent: tag });
+    g.style.setProperty('--tag', `var(--zone-${TAGS[tag]})`);
+    b.append(g);
+  }
   b.append(top, e);
   b.onclick = onclick;
   return b;
@@ -158,7 +163,7 @@ function renderList() {
   const all = [...imported, ...workouts];
   list.replaceChildren(...[...all.filter(totalDuration), ...all.filter((w) => !totalDuration(w))].map((w) => {
     const T = totalDuration(w);
-    const b = card(w.name, w.who, () => startRide(w), T ? hud.fmt(T) : '∞');
+    const b = card(w.name, w.who, () => startRide(w), T ? hud.fmt(T) : '∞', w.tag);
     if (T) {
       const cv = document.createElement('canvas');
       cv.width = 500; cv.height = 120;
